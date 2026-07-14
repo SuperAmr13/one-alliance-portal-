@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONe Alliance Portal</title>
+    <!-- Tailwind CSS لضمان التصميم العصري والمتجاوب -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- شريط التنقل العلوي (Navbar) -->
+    <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-300">ONe</span>
+                <span class="text-xs bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2.5 py-0.5 rounded-full font-bold">Portal</span>
+            </div>
+            
+            <!-- أزرار اختيار اللغة والدور السريع -->
+            <div class="flex items-center gap-2">
+                <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-amber-500 outline-none">
+                    <option value="ar">العربية 🇸🇦</option>
+                    <option value="en">English 🇺🇸</option>
+                    <option value="tr">Türkçe 🇹🇷</option>
+                    <option value="id">Bahasa 🇮🇩</option>
+                </select>
+                <select id="roleSelect" onchange="changeRole(this.value)" class="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-yellow-400 outline-none font-bold">
+                    <option value="member">عضو (Member)</option>
+                    <option value="r4">مشرف (R4)</option>
+                    <option value="r5">قائد (R5)</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- المحتوى الرئيسي للموقع -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        
+        <!-- صفحة الدخول (تظهر افتراضياً) -->
+        <div id="authSection" class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl">
+            <h2 id="authTitle" class="text-2xl font-extrabold text-center text-amber-500 mb-6">تسجيل الدخول للتحالف</h2>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label id="idLabel" class="block text-xs font-semibold text-slate-400 mb-1.5 text-right">معرّف اللاعب (Player ID)</label>
+                    <input type="number" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none font-mono" placeholder="12345678">
+                </div>
+                <div>
+                    <label id="passLabel" class="block text-xs font-semibold text-slate-400 mb-1.5 text-right">كلمة المرور (Password)</label>
+                    <input type="password" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none" placeholder="••••••••">
+                </div>
+                <button type="submit" id="loginBtn" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition-all shadow-lg mt-6">دخول</button>
+            </form>
+        </div>
+
+        <!-- لوحة التحكم (مخفية قبل تسجيل الدخول) -->
+        <div id="dashboardSection" class="hidden w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-amber-500" id="welcomeMsg">أهلاً بك في بوابة تحالف ONe</h2>
+                <p class="text-xs text-slate-400 mt-2" id="roleStatus">رتبتك الحالية: عضو</p>
+            </div>
+            
+            <!-- أقسام لوحة التحكم التجريبية -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                    <h3 class="font-bold text-amber-500 text-sm mb-2" id="vsTitle">المواجهات الأسبوعية (VS)</h3>
+                    <p class="text-xs text-slate-400" id="vsDesc">البيانات ستظهر هنا تلقائياً بمجرد إدخالها من الإدارة.</p>
+                </div>
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                    <h3 class="font-bold text-amber-500 text-sm mb-2" id="trainTitle">نظام القطارات (Train)</h3>
+                    <p class="text-xs text-slate-400" id="trainDesc">يعتمد الاختيار على معايير العدالة والنمو الأسبوعي.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- أسفل الصفحة (Footer) -->
+    <footer class="bg-slate-950 border-t border-slate-900 text-center p-4 text-xs text-slate-600">
+        © 2026 ONe Alliance Portal. All Rights Reserved. Owner: MR AMR.
+    </footer>
+
+    <!-- منطق العمل والترجمة التلقائية للموقع -->
+    <script>
+        // ملف الترجمة للغات الأربع
+        const translations = {
+            ar: {
+                title: "تسجيل الدخول للتحالف",
+                idLabel: "معرّف اللاعب (Player ID)",
+                passLabel: "كلمة المرور (Password)",
+                loginBtn: "دخول",
+                welcome: "أهلاً بك في بوابة تحالف ONe",
+                roleMember: "رتبتك الحالية: عضو",
+                roleR4: "رتبتك الحالية: مشرف R4",
+                roleR5: "رتبتك الحالية: قائد R5",
+                vsTitle: "المواجهات الأسبوعية (VS)",
+                vsDesc: "البيانات ستظهر هنا تلقائياً بمجرد إدخالها من الإدارة.",
+                trainTitle: "نظام القطارات (Train)",
+                trainDesc: "يعتمد الاختيار على معايير العدالة والنمو الأسبوعي."
+            },
+            en: {
+                title: "Alliance Login",
+                idLabel: "Player ID",
+                passLabel: "Password",
+                loginBtn: "Login",
+                welcome: "Welcome to ONe Alliance Portal",
+                roleMember: "Current Rank: Member",
+                roleR4: "Current Rank: R4 Officer",
+                roleR5: "Current Rank: R5 Leader",
+                vsTitle: "Weekly VS Matchups",
+                vsDesc: "Data will appear here automatically once updated by administration.",
+                trainTitle: "Train System",
+                trainDesc: "Selections are based on weekly growth and fairness rules."
+            },
+            tr: {
+                title: "İttifak Girişi",
+                idLabel: "Oyuncu ID'si",
+                passLabel: "Şifre",
+                loginBtn: "Giriş Yap",
+                welcome: "ONe İttifak Portalına Hoş Geldiniz",
+                roleMember: "Mevcut Rütbe: Üye",
+                roleR4: "Mevcut Rütbe: R4 Subayı",
+                roleR5: "Mevcut Rütbe: R5 Lideri",
+                vsTitle: "Haftalık VS Maçları",
+                vsDesc: "Yönetim tarafından güncellendiğinde veriler burada otomatik olarak görünecektir.",
+                trainTitle: "Tren Sistemi",
+                trainDesc: "Seçimler haftalık büyüme ve adalet kurallarına dayanmaktadır."
+            },
+            id: {
+                title: "Login Aliansi",
+                idLabel: "ID Pemain",
+                passLabel: "Kata Sandi",
+                loginBtn: "Masuk",
+                welcome: "Selamat Datang di Portal Aliansi ONe",
+                roleMember: "Pangkat Saat Ini: Anggota",
+                roleR4: "Pangkat Saat Ini: Perwira R4",
+                roleR5: "Pangkat Saat Ini: Pemimpin R5",
+                vsTitle: "Pertandingan VS Mingguan",
+                vsDesc: "Data akan muncul di sini secara otomatis setelah diperbarui oleh admin.",
+                trainTitle: "Sistem Kereta",
+                trainDesc: "Pemilihan didasarkan pada pertumbuhan mingguan dan aturan keadilan."
+            }
+        };
+
+        let currentLang = 'ar';
+        let currentRole = 'member';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            
+            // تحديث اتجاه النص واللغة
+            if(lang === 'ar') {
+                document.documentElement.dir = "rtl";
+                document.documentElement.lang = "ar";
+            } else {
+                document.documentElement.dir = "ltr";
+                document.documentElement.lang = lang;
+            }
+
+            // تطبيق الترجمات على العناصر
+            document.getElementById('authTitle').innerText = t.title;
+            document.getElementById('idLabel').innerText = t.idLabel;
+            document.getElementById('passLabel').innerText = t.passLabel;
+            document.getElementById('loginBtn').innerText = t.loginBtn;
+            document.getElementById('welcomeMsg').innerText = t.welcome;
+            
+            // تحديث رتبة العرض
+            updateRoleText();
+
+            document.getElementById('vsTitle').innerText = t.vsTitle;
+            document.getElementById('vsDesc').innerText = t.vsDesc;
+            document.getElementById('trainTitle').innerText = t.trainTitle;
+            document.getElementById('trainDesc').innerText = t.trainDesc;
+        }
+
+        function changeRole(role) {
+            currentRole = role;
+            updateRoleText();
+        }
+
+        function updateRoleText() {
+            const t = translations[currentLang];
+            const statusEl = document.getElementById('roleStatus');
+            if (currentRole === 'member') statusEl.innerText = t.roleMember;
+            else if (currentRole === 'r4') statusEl.innerText = t.roleR4;
+            else if (currentRole === 'r5') statusEl.innerText = t.roleR5;
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            // الانتقال للوحة التحكم للتجربة البصرية
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
