@@ -7,6 +7,8 @@
     <!-- Tailwind CSS لضمان التصميم العصري والمتجاوب -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- مكتبة Supabase للربط المباشر بالسحابة -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: 'Cairo', sans-serif;
@@ -23,8 +25,9 @@
                 <span class="text-xs bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2.5 py-0.5 rounded-full font-bold">Portal</span>
             </div>
             
-            <!-- زر اختيار اللغة فقط (تم إزالة اختيار الرتبة تماماً للأمان) -->
-            <div class="flex items-center gap-2">
+            <!-- أزرار الخروج واختيار اللغة -->
+            <div class="flex items-center gap-3">
+                <button id="logoutBtn" onclick="handleLogout()" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-lg font-bold hover:bg-red-500/20 transition-all">تسجيل الخروج</button>
                 <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-amber-500 outline-none font-bold cursor-pointer">
                     <option value="ar">العربية 🇸🇦</option>
                     <option value="en">English 🇺🇸</option>
@@ -51,11 +54,11 @@
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="idLabel block text-xs font-semibold text-slate-400 mb-1.5 text-right">معرّف اللاعب (Player ID)</label>
-                    <input type="number" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none font-mono" placeholder="12345678">
+                    <input type="number" id="loginId" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none font-mono" placeholder="12345678">
                 </div>
                 <div>
                     <label class="passLabel block text-xs font-semibold text-slate-400 mb-1.5 text-right">كلمة المرور (Password)</label>
-                    <input type="password" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none" placeholder="••••••••">
+                    <input type="password" id="loginPass" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none" placeholder="••••••••">
                 </div>
                 <button type="submit" class="loginBtn w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition-all shadow-lg mt-6">دخول</button>
             </form>
@@ -64,15 +67,15 @@
             <form id="signupForm" onsubmit="handleSignup(event)" class="space-y-4 hidden">
                 <div>
                     <label class="idLabel block text-xs font-semibold text-slate-400 mb-1.5 text-right">معرّف اللاعب (Player ID)</label>
-                    <input type="number" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none font-mono" placeholder="12345678">
+                    <input type="number" id="signupId" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none font-mono" placeholder="12345678">
                 </div>
                 <div>
                     <label id="nameLabel" class="block text-xs font-semibold text-slate-400 mb-1.5 text-right">الاسم داخل اللعبة (In-Game Name)</label>
-                    <input type="text" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none" placeholder="ONe | MR AMR">
+                    <input type="text" id="signupName" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none" placeholder="ONe | MR AMR">
                 </div>
                 <div>
                     <label class="passLabel block text-xs font-semibold text-slate-400 mb-1.5 text-right">كلمة المرور (Password)</label>
-                    <input type="password" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none" placeholder="••••••••">
+                    <input type="password" id="signupPass" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none" placeholder="••••••••">
                 </div>
                 <button type="submit" id="signupBtn" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition-all shadow-lg mt-6">إرسال طلب التسجيل</button>
             </form>
@@ -87,14 +90,25 @@
 
         </div>
 
-        <!-- لوحة التحكم (مخفية قبل الموافقة وتسجيل الدخول) -->
+        <!-- لوحة تحكم الأعضاء والمديرين (مخفية قبل تسجيل الدخول المعتمد) -->
         <div id="dashboardSection" class="hidden w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
             <div class="text-center mb-8">
                 <h2 class="text-2xl font-bold text-amber-500" id="welcomeMsg">أهلاً بك في بوابة تحالف ONe</h2>
                 <p class="text-xs text-slate-400 mt-2" id="roleStatus">رتبتك الحالية: عضو</p>
             </div>
+
+            <!-- لوحة تحكم المسؤول الخاصة بمستمر عمرو لإدارة الأعضاء (تظهر للقادة فقط R5) -->
+            <div id="adminPanel" class="hidden bg-slate-950 border border-amber-500/20 p-5 rounded-xl mb-6">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                    <h3 class="font-extrabold text-amber-500 text-base flex items-center gap-2">🛠️ لوحة إدارة التحالف والطلبات المعلقة</h3>
+                    <span class="text-xs bg-amber-500/10 text-amber-400 px-2 py-1 rounded-full font-bold" id="pendingCount">0 طلبات معلقة</span>
+                </div>
+                <!-- قائمة الطلبات المعلقة -->
+                <div id="pendingList" class="space-y-3">
+                    <p class="text-xs text-slate-500 text-center py-4">لا توجد طلبات تسجيل معلقة حالياً.</p>
+                </div>
+            </div>
             
-            <!-- أقسام لوحة التحكم التجريبية -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
                     <h3 class="font-bold text-amber-500 text-sm mb-2" id="vsTitle">المواجهات الأسبوعية (VS)</h3>
@@ -114,9 +128,12 @@
         © 2026 ONe Alliance Portal. All Rights Reserved. Owner: MR AMR.
     </footer>
 
-    <!-- منطق العمل والترجمة التلقائية للموقع -->
+    <!-- منطق العمل والترجمة والربط مع Supabase -->
     <script>
-        // ملف الترجمة للغات الأربع لدعم التسجيل الجديد
+        const SUPABASE_URL = "https://ldgeerpyyjpfsjijgjif.supabase.co";
+        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkZ2VlcnB5eWpwZnNqaWpnamlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDcwNzYsImV4cCI6MjA5OTYyMzA3Nn0.UrdUEQOSTXwC3NhZcQtKbKmecpUbeWlwuF4bTPz8sI8";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         const translations = {
             ar: {
                 tabLogin: "تسجيل الدخول",
@@ -184,17 +201,17 @@
                 trainTitle: "Sistem Kereta",
                 trainDesc: "Pemilihan didasarkan pada pertumbuhan mingguan dan aturan keadilan.",
                 pendingTitle: "Pendaftaran Dikirim!",
-                pendingDesc: "Status akun Anda saat ini 'Menunggu'. Harap tunggu Pemimpin (MR AMR) atau Admin untuk menyetujui akun Anda dan menetapkan pangkat Anda sebelum masuk."
+                pendingDesc: "Status akun Anda saat ini 'Menunggu'. Harap tunggu Pemimpin (MR AMR) or Admin untuk menyetujui akun Anda dan menetapkan pangkat Anda sebelum masuk."
             }
         };
 
         let currentLang = 'ar';
+        let currentUser = null;
 
         function changeLanguage(lang) {
             currentLang = lang;
             const t = translations[lang];
             
-            // تحديث اتجاه النص واللغة
             if(lang === 'ar') {
                 document.documentElement.dir = "rtl";
                 document.documentElement.lang = "ar";
@@ -203,11 +220,9 @@
                 document.documentElement.lang = lang;
             }
 
-            // تطبيق الترجمات
             document.getElementById('tabLogin').innerText = t.tabLogin;
             document.getElementById('tabSignup').innerText = t.tabSignup;
             
-            // تحديث الليبلز المتكررة
             document.querySelectorAll('.idLabel').forEach(el => el.innerText = t.idLabel);
             document.querySelectorAll('.passLabel').forEach(el => el.innerText = t.passLabel);
             document.querySelectorAll('.loginBtn').forEach(el => el.innerText = t.loginBtn);
@@ -215,7 +230,10 @@
             document.getElementById('nameLabel').innerText = t.nameLabel;
             document.getElementById('signupBtn').innerText = t.signupBtn;
             document.getElementById('welcomeMsg').innerText = t.welcome;
-            document.getElementById('roleStatus').innerText = t.roleMember;
+            
+            if (currentUser && currentUser.role !== 'r5') {
+                document.getElementById('roleStatus').innerText = (lang === 'ar' ? `رتبتك الحالية: ${currentUser.role === 'r4' ? 'مشرف' : 'عضو'}` : `Rank: ${currentUser.role}`);
+            }
 
             document.getElementById('vsTitle').innerText = t.vsTitle;
             document.getElementById('vsDesc').innerText = t.vsDesc;
@@ -233,7 +251,6 @@
             const tabSignup = document.getElementById('tabSignup');
             const pendingMessage = document.getElementById('pendingMessage');
 
-            // إخفاء رسالة الانتظار عند الانتقال بين التبويبات
             pendingMessage.classList.add('hidden');
 
             if (tab === 'login') {
@@ -249,19 +266,182 @@
             }
         }
 
-        function handleLogin(event) {
+        // تسجيل الدخول
+        async function handleLogin(event) {
             event.preventDefault();
-            // مؤقتاً للتجربة، نقوم بإظهار لوحة التحكم مباشرة
-            document.getElementById('authCard').classList.add('hidden');
-            document.getElementById('dashboardSection').classList.remove('hidden');
+            const playerId = document.getElementById('loginId').value.trim();
+            const password = document.getElementById('loginPass').value;
+
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('player_id', playerId)
+                    .single();
+
+                if (error || !data) {
+                    alert(currentLang === 'ar' ? 'معرف اللاعب غير موجود!' : 'Player ID not found!');
+                    return;
+                }
+
+                if (data.password !== password) {
+                    alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
+                    return;
+                }
+
+                if (data.status === 'pending') {
+                    alert(currentLang === 'ar' ? 'حسابك لا يزال معلقاً بانتظار موافقة القائد!' : 'Your account is pending leader approval!');
+                    return;
+                }
+
+                currentUser = data;
+
+                // التبديل إلى الشاشة المناسبة بعد النجاح
+                document.getElementById('authCard').classList.add('hidden');
+                document.getElementById('dashboardSection').classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.remove('hidden');
+
+                // تخصيص اللوحة بناءً على الرتبة
+                if (data.role === 'r5') {
+                    document.getElementById('roleStatus').innerText = (currentLang === 'ar' ? 'رتبتك الحالية: صاحب البرنامج والتحالف 👑' : 'Role: Owner / R5');
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                    loadPendingUsers(); // جلب طلبات الأعضاء فوراً لـ MR AMR
+                } else {
+                    document.getElementById('roleStatus').innerText = (currentLang === 'ar' ? `رتبتك الحالية: ${data.role === 'r4' ? 'مشرف' : 'عضو'}` : `Rank: ${data.role}`);
+                    document.getElementById('adminPanel').classList.add('hidden');
+                }
+                
+            } catch (err) {
+                console.error(err);
+                alert('حدث خطأ أثناء تسجيل الدخول!');
+            }
         }
 
-        function handleSignup(event) {
+        // تسجيل الخروج
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('authCard').classList.remove('hidden');
+            document.getElementById('loginId').value = '';
+            document.getElementById('loginPass').value = '';
+            switchAuthTab('login');
+        }
+
+        // إنشاء حساب جديد وحفظه في السحابة كـ pending
+        async function handleSignup(event) {
             event.preventDefault();
-            // إخفاء فورم التسجيل وعرض رسالة الانتظار التفاعلية
-            document.getElementById('signupForm').classList.add('hidden');
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('pendingMessage').classList.remove('hidden');
+            const playerId = document.getElementById('signupId').value.trim();
+            const name = document.getElementById('signupName').value.trim();
+            const password = document.getElementById('signupPass').value;
+
+            try {
+                const { error } = await supabase
+                    .from('profiles')
+                    .insert([
+                        { player_id: playerId, in_game_name: name, password: password, status: 'pending', role: 'member' }
+                    ]);
+
+                if (error) {
+                    if (error.code === '23505') {
+                        alert(currentLang === 'ar' ? 'هذا الحساب مسجل بالفعل!' : 'This Player ID is already registered!');
+                    } else {
+                        alert('حدث خطأ: ' + error.message);
+                    }
+                    return;
+                }
+
+                document.getElementById('signupForm').classList.add('hidden');
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('pendingMessage').classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                alert('فشل الاتصال بالسحابة!');
+            }
+        }
+
+        // خاص بالإدارة: جلب قائمة الأعضاء المعلقين
+        async function loadPendingUsers() {
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('status', 'pending')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const pendingList = document.getElementById('pendingList');
+                const pendingCount = document.getElementById('pendingCount');
+                pendingCount.innerText = `${data.length} طلبات معلقة`;
+
+                if (data.length === 0) {
+                    pendingList.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">لا توجد طلبات تسجيل معلقة حالياً.</p>`;
+                    return;
+                }
+
+                pendingList.innerHTML = '';
+                data.forEach(user => {
+                    pendingList.innerHTML += `
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-slate-900 border border-slate-800 p-3.5 rounded-lg gap-3">
+                            <div class="text-right">
+                                <div class="font-bold text-slate-100 text-sm">${user.in_game_name}</div>
+                                <div class="text-xs text-slate-500 mt-1">Player ID: <span class="font-mono text-amber-500">${user.player_id}</span></div>
+                            </div>
+                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                                <select id="role-${user.player_id}" class="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-slate-300 outline-none">
+                                    <option value="member">عضو (Member)</option>
+                                    <option value="r4">مشرف (R4)</option>
+                                    <option value="r5">قائد (R5)</option>
+                                </select>
+                                <button onclick="approveUser('${user.player_id}')" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 text-xs font-bold px-3 py-1.5 rounded transition-all">تفعيل</button>
+                                <button onclick="rejectUser('${user.player_id}')" class="bg-red-600/10 border border-red-600/30 text-red-400 hover:bg-red-600/20 text-xs font-bold px-3 py-1.5 rounded transition-all">رفض</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // خاص بالإدارة: تفعيل الحساب وتحديد رتبته
+        async function approveUser(playerId) {
+            const selectedRole = document.getElementById(`role-${playerId}`).value;
+            try {
+                const { error } = await supabase
+                    .from('profiles')
+                    .update({ status: 'approved', role: selectedRole })
+                    .eq('player_id', playerId);
+
+                if (error) throw error;
+                alert('تم تفعيل الحساب وتحديد رتبته بنجاح!');
+                loadPendingUsers(); // تحديث القائمة فوراً
+            } catch (err) {
+                console.error(err);
+                alert('حدث خطأ أثناء التفعيل!');
+            }
+        }
+
+        // خاص بالإدارة: رفض طلب التسجيل وحذفه
+        async function rejectUser(playerId) {
+            if (!confirm('هل أنت متأكد من رفض طلب هذا اللاعب؟')) return;
+            try {
+                const { error } = await supabase
+                    .from('profiles')
+                    .delete()
+                    .eq('player_id', playerId);
+
+                if (error) throw error;
+                alert('تم رفض وحذف الطلب.');
+                loadPendingUsers(); // تحديث القائمة فوراً
+            } catch (err) {
+                console.error(err);
+                alert('حدث خطأ أثناء حذف الطلب!');
+            }
         }
 
         function backToLoginAfterSignup() {
@@ -270,3 +450,4 @@
     </script>
 </body>
 </html>
+ 
