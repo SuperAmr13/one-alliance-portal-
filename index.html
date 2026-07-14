@@ -5,125 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ONe Alliance Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>body { font-family: 'Cairo', sans-serif; }</style>
+    <style>
+        body { font-family: sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 min-h-screen">
 
-    <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
+    <header class="bg-slate-900 border-b border-slate-800 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <span class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-300">ONe</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <select id="langSelect" class="text-xs bg-slate-800 border border-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg font-bold outline-none cursor-pointer">
-                    <option value="en">English</option>
-                    <option value="ar">العربية</option>
-                    <option value="tr">Türkçe</option>
-                    <option value="id">Bahasa Indonesia</option>
-                </select>
-                <button id="logoutBtn" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-lg font-bold">Logout</button>
-            </div>
+            <h1 class="text-xl font-bold text-amber-500">ONe Portal</h1>
+            <select id="langSelect" onchange="changeLanguage()" class="bg-slate-800 text-xs p-2 rounded text-white">
+                <option value="en">English</option>
+                <option value="ar">العربية</option>
+                <option value="tr">Türkçe</option>
+                <option value="id">Bahasa Indonesia</option>
+            </select>
         </div>
     </header>
 
-    <main class="flex-grow flex items-center justify-center p-4">
-        <div id="authCard" class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-            <div class="flex border-b border-slate-800 mb-6">
-                <button id="tabLoginBtn" class="flex-1 pb-3 text-sm font-bold border-b-2 border-amber-500 text-amber-500">Login</button>
-                <button id="tabSignupBtn" class="flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-400">Sign Up</button>
+    <main class="flex justify-center p-4">
+        <div id="authCard" class="w-full max-w-md bg-slate-900 p-6 rounded-xl border border-slate-800">
+            <!-- التبويبات -->
+            <div class="flex gap-4 mb-6 border-b border-slate-800 pb-2">
+                <button id="btnTabLogin" onclick="showTab('login')" class="text-amber-500 font-bold">Login</button>
+                <button id="btnTabSignup" onclick="showTab('signup')" class="text-slate-400">Sign Up</button>
             </div>
 
-            <form id="loginForm" class="space-y-4">
-                <div><label id="lblLoginId" class="block text-xs font-semibold text-slate-400 mb-1">Player ID</label><input type="number" id="loginId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm outline-none"></div>
-                <div><label id="lblLoginPass" class="block text-xs font-semibold text-slate-400 mb-1">Password</label><input type="password" id="loginPass" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm outline-none"></div>
-                <button type="submit" id="btnLoginSubmit" class="w-full bg-amber-600 text-slate-950 font-bold py-3 rounded-lg text-sm">Login</button>
+            <!-- فورم الدخول -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <input type="number" id="lId" placeholder="Player ID" class="w-full bg-slate-950 p-3 rounded mb-3 border border-slate-800">
+                <input type="password" id="lPass" placeholder="Password" class="w-full bg-slate-950 p-3 rounded mb-3 border border-slate-800">
+                <button type="submit" id="btnLogin" class="w-full bg-amber-600 p-3 rounded font-bold">Login</button>
             </form>
 
-            <form id="signupForm" class="space-y-4 hidden">
-                <div><label id="lblSignupId" class="block text-xs font-semibold text-slate-400 mb-1">Player ID</label><input type="number" id="signupId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm outline-none"></div>
-                <div><label id="lblSignupName" class="block text-xs font-semibold text-slate-400 mb-1">In-Game Name</label><input type="text" id="signupName" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm outline-none"></div>
-                <div><label id="lblSignupPass" class="block text-xs font-semibold text-slate-400 mb-1">Password</label><input type="password" id="signupPass" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm outline-none"></div>
-                <button type="submit" id="btnSignupSubmit" class="w-full bg-emerald-600 text-slate-950 font-bold py-3 rounded-lg text-sm">Submit Registration</button>
+            <!-- فورم التسجيل -->
+            <form id="signupForm" onsubmit="handleSignup(event)" class="hidden">
+                <input type="number" id="sId" placeholder="Player ID" required class="w-full bg-slate-950 p-3 rounded mb-3 border border-slate-800">
+                <input type="text" id="sName" placeholder="In-Game Name" required class="w-full bg-slate-950 p-3 rounded mb-3 border border-slate-800">
+                <input type="password" id="sPass" placeholder="Password" required class="w-full bg-slate-950 p-3 rounded mb-3 border border-slate-800">
+                <button type="submit" id="btnSignup" class="w-full bg-emerald-600 p-3 rounded font-bold">Sign Up</button>
             </form>
-
-            <div id="pendingMessage" class="hidden text-center py-4">
-                <h3 id="pendingTitle" class="text-lg font-bold text-amber-500">Request Submitted!</h3>
-            </div>
-        </div>
-
-        <div id="dashboardSection" class="hidden w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-            <h2 id="welcomeHeader" class="text-2xl font-bold text-amber-500 text-center">Welcome</h2>
-            <div id="adminPanel" class="hidden mt-6 bg-slate-950 p-5 rounded-xl border border-amber-500/20">
-                <h3 id="adminTitle" class="font-bold text-amber-500 mb-4">Management Panel</h3>
-                <div id="pendingList" class="space-y-3"></div>
-            </div>
         </div>
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const SUPABASE_URL = "https://ldgeerpyyjpfsjijgjif.supabase.co";
-            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkZ2VlcnB5eWpwZnNqaWpnamlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDcwNzYsImV4cCI6MjA5OTYyMzA3Nn0.UrdUEQOSTXwC3NhZcQtKbKmecpUbeWlwuF4bTPz8sI8";
-            const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            let currentLang = 'en';
+        const supabase = supabase.createClient("https://ldgeerpyyjpfsjijgjif.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkZ2VlcnB5eWpwZnNqaWpnamlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDcwNzYsImV4cCI6MjA5OTYyMzA3Nn0.UrdUEQOSTXwC3NhZcQtKbKmecpUbeWlwuF4bTPz8sI8");
 
-            const translations = {
-                en: { tabLogin: "Login", tabSignup: "Sign Up", lblLoginId: "Player ID", lblLoginPass: "Password", btnLoginSubmit: "Login", lblSignupId: "Player ID", lblSignupName: "In-Game Name", lblSignupPass: "Password", btnSignupSubmit: "Submit", welcomeHeader: "Welcome", adminTitle: "Management", logoutBtn: "Logout" },
-                ar: { tabLogin: "دخول", tabSignup: "تسجيل", lblLoginId: "معرف اللاعب", lblLoginPass: "كلمة السر", btnLoginSubmit: "دخول", lblSignupId: "معرف اللاعب", lblSignupName: "الاسم", lblSignupPass: "كلمة السر", btnSignupSubmit: "إرسال", welcomeHeader: "أهلاً بك", adminTitle: "لوحة الإدارة", logoutBtn: "خروج" },
-                tr: { tabLogin: "Giriş", tabSignup: "Kayıt", lblLoginId: "Oyuncu ID", lblLoginPass: "Şifre", btnLoginSubmit: "Giriş", lblSignupId: "Oyuncu ID", lblSignupName: "İsim", lblSignupPass: "Şifre", btnSignupSubmit: "Gönder", welcomeHeader: "Hoş Geldiniz", adminTitle: "Yönetim", logoutBtn: "Çıkış" },
-                id: { tabLogin: "Masuk", tabSignup: "Daftar", lblLoginId: "ID Pemain", lblLoginPass: "Kata Sandi", btnLoginSubmit: "Masuk", lblSignupId: "ID Pemain", lblSignupName: "Nama", lblSignupPass: "Kata Sandi", btnSignupSubmit: "Kirim", welcomeHeader: "Selamat Datang", adminTitle: "Manajemen", logoutBtn: "Keluar" }
-            };
+        const translations = {
+            en: { login: "Login", signup: "Sign Up", btnLogin: "Login", btnSignup: "Sign Up" },
+            ar: { login: "دخول", signup: "تسجيل", btnLogin: "دخول", btnSignup: "تسجيل" },
+            tr: { login: "Giriş", signup: "Kayıt", btnLogin: "Giriş", btnSignup: "Kayıt" },
+            id: { login: "Masuk", signup: "Daftar", btnLogin: "Masuk", btnSignup: "Daftar" }
+        };
 
-            // Translation Logic
-            function applyTranslations() {
-                const t = translations[currentLang];
-                document.getElementById('tabLoginBtn').innerText = t.tabLogin;
-                document.getElementById('tabSignupBtn').innerText = t.tabSignup;
-                document.getElementById('lblLoginId').innerText = t.lblLoginId;
-                document.getElementById('lblLoginPass').innerText = t.lblLoginPass;
-                document.getElementById('btnLoginSubmit').innerText = t.btnLoginSubmit;
-                document.getElementById('lblSignupId').innerText = t.lblSignupId;
-                document.getElementById('lblSignupName').innerText = t.lblSignupName;
-                document.getElementById('lblSignupPass').innerText = t.lblSignupPass;
-                document.getElementById('btnSignupSubmit').innerText = t.btnSignupSubmit;
-                document.getElementById('welcomeHeader').innerText = t.welcomeHeader;
-                document.getElementById('adminTitle').innerText = t.adminTitle;
-                document.getElementById('logoutBtn').innerText = t.logoutBtn;
+        function changeLanguage() {
+            const lang = document.getElementById('langSelect').value;
+            const t = translations[lang];
+            document.getElementById('btnTabLogin').innerText = t.login;
+            document.getElementById('btnTabSignup').innerText = t.signup;
+            document.getElementById('btnLogin').innerText = t.btnLogin;
+            document.getElementById('btnSignup').innerText = t.btnSignup;
+            document.getElementById('htmlTag').dir = (lang === 'ar') ? 'rtl' : 'ltr';
+        }
+
+        function showTab(tab) {
+            document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('signupForm').classList.toggle('hidden', tab !== 'signup');
+            document.getElementById('btnTabLogin').className = (tab === 'login') ? "text-amber-500 font-bold" : "text-slate-400";
+            document.getElementById('btnTabSignup').className = (tab === 'signup') ? "text-amber-500 font-bold" : "text-slate-400";
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            console.log("Starting Signup...");
+            const { data, error } = await supabase.from('profiles').insert([{
+                player_id: document.getElementById('sId').value,
+                in_game_name: document.getElementById('sName').value,
+                password: document.getElementById('sPass').value,
+                status: 'pending',
+                role: 'member'
+            }]);
+            
+            if (error) {
+                console.error("Supabase Error:", error);
+                alert("Error: " + error.message);
+            } else {
+                alert("Success! Pending approval.");
             }
+        }
 
-            // Language Switcher
-            document.getElementById('langSelect').addEventListener('change', (e) => {
-                currentLang = e.target.value;
-                document.getElementById('htmlTag').setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-                applyTranslations();
-            });
-
-            // Tab Switching
-            document.getElementById('tabLoginBtn').addEventListener('click', () => {
-                document.getElementById('loginForm').classList.remove('hidden');
-                document.getElementById('signupForm').classList.add('hidden');
-            });
-            document.getElementById('tabSignupBtn').addEventListener('click', () => {
-                document.getElementById('loginForm').classList.add('hidden');
-                document.getElementById('signupForm').classList.remove('hidden');
-            });
-
-            // Signup Form
-            document.getElementById('signupForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                console.log("Signup clicked");
-                const { error } = await supabase.from('profiles').insert([{ 
-                    player_id: document.getElementById('signupId').value, 
-                    in_game_name: document.getElementById('signupName').value, 
-                    password: document.getElementById('signupPass').value, 
-                    status: 'pending', role: 'member' 
-                }]);
-                if (error) { alert("Error: " + error.message); } 
-                else { alert("Success!"); }
-            });
-        });
+        async function handleLogin(e) { e.preventDefault(); alert("Login function here"); }
     </script>
 </body>
 </html>
