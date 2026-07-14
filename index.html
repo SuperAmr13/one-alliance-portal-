@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlTag">
+<html lang="en" dir="ltr" id="htmlTag">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,15 +13,20 @@
 
     <!-- Header -->
     <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto flex justify-between items-center gap-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <span class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-300">ONe</span>
                 <span class="text-xs bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2.5 py-0.5 rounded-full font-bold">Portal</span>
             </div>
             <div class="flex items-center gap-3">
-                <!-- زر تغيير اللغة -->
-                <button onclick="toggleLanguage()" id="langBtn" class="text-xs bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-lg hover:bg-slate-700 transition-all font-bold">English</button>
-                <button id="logoutBtn" onclick="handleLogout()" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-lg font-bold hover:bg-red-500/20 transition-all">تسجيل الخروج</button>
+                <!-- قائمة اختيار اللغات الأربعة -->
+                <select onchange="changeLanguage(this.value)" id="langSelect" class="text-xs bg-slate-800 border border-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg hover:bg-slate-700 transition-all font-bold outline-none">
+                    <option value="en" selected>English</option>
+                    <option value="ar">العربية</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="id">Bahasa Indonesia</option>
+                </select>
+                <button id="logoutBtn" onclick="handleLogout()" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-lg font-bold hover:bg-red-500/20 transition-all">Logout</button>
             </div>
         </div>
     </header>
@@ -29,64 +34,64 @@
     <!-- Main Content -->
     <main class="flex-grow flex items-center justify-center p-4">
         
-        <!-- كارت الدخول والتسجيل -->
+        <!-- Auth Card -->
         <div id="authCard" class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl">
             <div class="flex border-b border-slate-800 mb-6">
-                <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 pb-3 text-sm font-bold border-b-2 border-amber-500 text-amber-500 transition-all">تسجيل الدخول</button>
-                <button id="tabSignup" onclick="switchAuthTab('signup')" class="flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all">إنشاء حساب جديد</button>
+                <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 pb-3 text-sm font-bold border-b-2 border-amber-500 text-amber-500 transition-all">Login</button>
+                <button id="tabSignup" onclick="switchAuthTab('signup')" class="flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all">Sign Up</button>
             </div>
 
-            <!-- نموذج تسجيل الدخول -->
+            <!-- Login Form -->
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label id="lblLoginId" class="block text-xs font-semibold text-slate-400 mb-1.5 text-right">معرّف اللاعب (Player ID)</label>
-                    <input type="number" id="loginId" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none font-mono" placeholder="">
+                    <label id="lblLoginId" class="block text-xs font-semibold text-slate-400 mb-1.5 text-left">Player ID</label>
+                    <input type="number" id="loginId" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-left outline-none font-mono" placeholder="12345678">
                 </div>
                 <div>
-                    <label id="lblLoginPass" class="block text-xs font-semibold text-slate-400 mb-1.5 text-right">كلمة المرور (Password)</label>
-                    <input type="password" id="loginPass" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none" placeholder="••••••••">
+                    <label id="lblLoginPass" class="block text-xs font-semibold text-slate-400 mb-1.5 text-left">Password</label>
+                    <input type="password" id="loginPass" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-left outline-none" placeholder="••••••••">
                 </div>
-                <button type="submit" id="btnLoginSubmit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition-all shadow-lg mt-6">دخول</button>
+                <button type="submit" id="btnLoginSubmit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition-all shadow-lg mt-6">Login</button>
             </form>
 
-            <!-- نموذج إنشاء حساب -->
+            <!-- Signup Form -->
             <form id="signupForm" onsubmit="handleSignup(event)" class="space-y-4 hidden">
                 <div>
-                    <label id="lblSignupId" class="block text-xs font-semibold text-slate-400 mb-1.5 text-right">معرّف اللاعب (Player ID)</label>
-                    <input type="number" id="signupId" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none font-mono">
+                    <label id="lblSignupId" class="block text-xs font-semibold text-slate-400 mb-1.5 text-left">Player ID</label>
+                    <input type="number" id="signupId" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-left outline-none font-mono">
                 </div>
                 <div>
-                    <label id="lblSignupName" class="block text-xs font-semibold text-slate-400 mb-1.5 text-right">الاسم داخل اللعبة (In-Game Name)</label>
-                    <input type="text" id="signupName" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none">
+                    <label id="lblSignupName" class="block text-xs font-semibold text-slate-400 mb-1.5 text-left">In-Game Name</label>
+                    <input type="text" id="signupName" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-left outline-none">
                 </div>
                 <div>
-                    <label id="lblSignupPass" class="block text-xs font-semibold text-slate-400 mb-1.5 text-right">كلمة المرور (Password)</label>
-                    <input type="password" id="signupPass" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-right outline-none">
+                    <label id="lblSignupPass" class="block text-xs font-semibold text-slate-400 mb-1.5 text-left">Password</label>
+                    <input type="password" id="signupPass" required class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-lg px-4 py-2.5 text-sm text-left outline-none">
                 </div>
-                <button type="submit" id="btnSignupSubmit" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition-all shadow-lg mt-6">إرسال طلب التسجيل</button>
+                <button type="submit" id="btnSignupSubmit" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition-all shadow-lg mt-6">Submit Registration</button>
             </form>
 
-            <!-- رسالة التعليق -->
+            <!-- Pending Message -->
             <div id="pendingMessage" class="hidden text-center space-y-4 py-4">
                 <div class="mx-auto w-12 h-12 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full flex items-center justify-center text-xl font-bold">⏱️</div>
-                <h3 id="pendingTitle" class="text-lg font-bold text-amber-500">تم إرسال طلبك بنجاح!</h3>
-                <p id="pendingText" class="text-xs text-slate-400 leading-relaxed">يرجى انتظار قيام القائد (MR AMR) بتفعيل حسابك.</p>
-                <button id="btnReturnLogin" onclick="switchAuthTab('login')" class="text-xs text-amber-500 underline hover:text-amber-400 block mx-auto mt-4">العودة لتسجيل الدخول</button>
+                <h3 id="pendingTitle" class="text-lg font-bold text-amber-500">Request Submitted Successfully!</h3>
+                <p id="pendingText" class="text-xs text-slate-400 leading-relaxed">Please wait for Commander (MR AMR) to approve your account.</p>
+                <button id="btnReturnLogin" onclick="switchAuthTab('login')" class="text-xs text-amber-500 underline hover:text-amber-400 block mx-auto mt-4 font-bold">Back to Login</button>
             </div>
         </div>
 
-        <!-- لوحة التحكم للـ R5 والأعضاء -->
+        <!-- Dashboard -->
         <div id="dashboardSection" class="hidden w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
             <div class="text-center mb-8">
-                <h2 id="welcomeHeader" class="text-2xl font-bold text-amber-500">أهلاً بك في بوابة تحالف ONe</h2>
-                <p class="text-xs text-slate-400 mt-2" id="roleStatus">رتبتك الحالية: عضو</p>
+                <h2 id="welcomeHeader" class="text-2xl font-bold text-amber-500">Welcome to ONe Alliance Portal</h2>
+                <p class="text-sm text-slate-400 mt-2 font-bold" id="roleStatus">Your Current Rank: Member</p>
             </div>
             
-            <!-- لوحة المالك والـ R5 (تظهر فقط لك) -->
+            <!-- Admin Panel (R5 Only) -->
             <div id="adminPanel" class="hidden bg-slate-950 border border-amber-500/20 p-5 rounded-xl mb-6">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                    <h3 id="adminTitle" class="font-extrabold text-amber-500 text-base">🛠️ لوحة إدارة التحالف</h3>
-                    <span class="text-xs bg-amber-500/10 text-amber-400 px-2 py-1 rounded-full font-bold" id="pendingCount">0 طلبات</span>
+                    <h3 id="adminTitle" class="font-extrabold text-amber-500 text-base">🛠️ Alliance Management Panel</h3>
+                    <span class="text-xs bg-amber-500/10 text-amber-400 px-2 py-1 rounded-full font-bold" id="pendingCount">0 Requests</span>
                 </div>
                 <div id="pendingList" class="space-y-3"></div>
             </div>
@@ -104,34 +109,11 @@
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const OWNER_ID = "1200307497001771";
-        const OWNER_PASSWORD = "132005";
         let currentUser = null;
-        let currentLang = 'ar';
+        let currentLang = 'en';
 
+        // ترجمة اللغات الأربعة بالكامل
         const translations = {
-            ar: {
-                tabLogin: "تسجيل الدخول",
-                tabSignup: "إنشاء حساب جديد",
-                lblLoginId: "معرّف اللاعب (Player ID)",
-                lblLoginPass: "كلمة المرور (Password)",
-                btnLoginSubmit: "دخول",
-                lblSignupId: "معرّف اللاعب (Player ID)",
-                lblSignupName: "الاسم داخل اللعبة (In-Game Name)",
-                lblSignupPass: "كلمة المرور (Password)",
-                btnSignupSubmit: "إرسال طلب التسجيل",
-                pendingTitle: "تم إرسال طلبك بنجاح!",
-                pendingText: "يرجى انتظار قيام القائد (MR AMR) بتفعيل حسابك.",
-                btnReturnLogin: "العودة لتسجيل الدخول",
-                welcomeHeader: "أهلاً بك في بوابة تحالف ONe",
-                roleStatus: "رتبتك الحالية: ",
-                adminTitle: "🛠️ لوحة إدارة التحالف",
-                logoutBtn: "تسجيل الخروج",
-                msgPending: "حسابك معلق بانتظار الموافقة!",
-                msgError: "بيانات الدخول غير صحيحة!",
-                msgNoPending: "لا توجد طلبات معلقة حالياً.",
-                msgApproveSuccess: "تم تفعيل الحساب بنجاح!",
-                ownerRoleText: "صاحب البرنامج والتحالف 👑"
-            },
             en: {
                 tabLogin: "Login",
                 tabSignup: "Sign Up",
@@ -153,24 +135,108 @@
                 msgError: "Incorrect login details!",
                 msgNoPending: "No pending requests at the moment.",
                 msgApproveSuccess: "Account approved successfully!",
-                ownerRoleText: "App Owner & Leader 👑"
+                ownerRoleText: "App Owner & Leader 👑",
+                memberRoleText: "Member",
+                textApproveBtn: "Approve",
+                textPendingCount: "Requests"
+            },
+            ar: {
+                tabLogin: "تسجيل الدخول",
+                tabSignup: "إنشاء حساب جديد",
+                lblLoginId: "معرّف اللاعب (Player ID)",
+                lblLoginPass: "كلمة المرور (Password)",
+                btnLoginSubmit: "دخول",
+                lblSignupId: "معرّف اللاعب (Player ID)",
+                lblSignupName: "الاسم داخل اللعبة (In-Game Name)",
+                lblSignupPass: "كلمة المرور (Password)",
+                btnSignupSubmit: "إرسال طلب التسجيل",
+                pendingTitle: "تم إرسال طلبك بنجاح!",
+                pendingText: "يرجى انتظار قيام القائد (MR AMR) بتفعيل حسابك.",
+                btnReturnLogin: "العودة لتسجيل الدخول",
+                welcomeHeader: "أهلاً بك في بوابة تحالف ONe",
+                roleStatus: "رتبتك الحالية: ",
+                adminTitle: "🛠️ لوحة إدارة التحالف",
+                logoutBtn: "تسجيل الخروج",
+                msgPending: "حسابك معلق بانتظار الموافقة!",
+                msgError: "بيانات الدخول غير صحيحة!",
+                msgNoPending: "لا توجد طلبات معلقة حالياً.",
+                msgApproveSuccess: "تم تفعيل الحساب بنجاح!",
+                ownerRoleText: "صاحب البرنامج والتحالف 👑",
+                memberRoleText: "عضو",
+                textApproveBtn: "تفعيل",
+                textPendingCount: "طلبات"
+            },
+            tr: {
+                tabLogin: "Giriş Yap",
+                tabSignup: "Kayıt Ol",
+                lblLoginId: "Oyuncu ID (Player ID)",
+                lblLoginPass: "Şifre",
+                btnLoginSubmit: "Giriş",
+                lblSignupId: "Oyuncu ID (Player ID)",
+                lblSignupName: "Oyun İçi Adı",
+                lblSignupPass: "Şifre",
+                btnSignupSubmit: "Kayıt Talebi Gönder",
+                pendingTitle: "Talebiniz Başarıyla Gönderildi!",
+                pendingText: "Lütfen liderin (MR AMR) hesabınızı onaylamasını bekleyin.",
+                btnReturnLogin: "Girişe Dön",
+                welcomeHeader: "ONe Alliance Portalına Hoş Geldiniz",
+                roleStatus: "Mevcut Rütbeniz: ",
+                adminTitle: "🛠️ İttifak Yönetim Paneli",
+                logoutBtn: "Çıkış Yap",
+                msgPending: "Hesabınız onay bekliyor!",
+                msgError: "Hatalı giriş bilgileri!",
+                msgNoPending: "Şu anda bekleyen talep yok.",
+                msgApproveSuccess: "Hesap başarıyla onaylandı!",
+                ownerRoleText: "Uygulama Sahibi & Lider 👑",
+                memberRoleText: "Üye",
+                textApproveBtn: "Onayla",
+                textPendingCount: "Talep"
+            },
+            id: {
+                tabLogin: "Masuk",
+                tabSignup: "Daftar",
+                lblLoginId: "ID Pemain (Player ID)",
+                lblLoginPass: "Kata Sandi",
+                btnLoginSubmit: "Masuk",
+                lblSignupId: "ID Pemain (Player ID)",
+                lblSignupName: "Nama dalam Game",
+                lblSignupPass: "Kata Sandi",
+                btnSignupSubmit: "Kirim Pendaftaran",
+                pendingTitle: "Pendaftaran Berhasil Dikirim!",
+                pendingText: "Harap tunggu Pemimpin (MR AMR) untuk menyetujui akun Anda.",
+                btnReturnLogin: "Kembali ke Login",
+                welcomeHeader: "Selamat Datang di Portal Aliansi ONe",
+                roleStatus: "Pangkat Anda Saat Ini: ",
+                adminTitle: "🛠️ Panel Manajemen Aliansi",
+                logoutBtn: "Keluar",
+                msgPending: "Akun Anda sedang menunggu persetujuan!",
+                msgError: "Detail login salah!",
+                msgNoPending: "Tidak ada permintaan tertunda saat ini.",
+                msgApproveSuccess: "Akun berhasil disetujui!",
+                ownerRoleText: "Pemilik Aplikasi & Pemimpin 👑",
+                memberRoleText: "Anggota",
+                textApproveBtn: "Setujui",
+                textPendingCount: "Permintaan"
             }
         };
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        function changeLanguage(lang) {
+            currentLang = lang;
             const htmlTag = document.getElementById('htmlTag');
             
-            if (currentLang === 'en') {
-                htmlTag.setAttribute('dir', 'ltr');
-                htmlTag.setAttribute('lang', 'en');
-                document.getElementById('langBtn').innerText = 'العربية';
-            } else {
+            if (currentLang === 'ar') {
                 htmlTag.setAttribute('dir', 'rtl');
                 htmlTag.setAttribute('lang', 'ar');
-                document.getElementById('langBtn').innerText = 'English';
+            } else {
+                htmlTag.setAttribute('dir', 'ltr');
+                htmlTag.setAttribute('lang', currentLang);
             }
             applyTranslations();
+        }
+
+        // دالة مساعدة لتشغيل الترجمة بمجرد تغيير الخيار
+        function toggleLanguage() {
+            // غير مستخدمة مباشرة الآن لأننا نعتمد على القائمة المنسدلة changeLanguage
         }
 
         function applyTranslations() {
@@ -191,17 +257,42 @@
             document.getElementById('adminTitle').innerText = t.adminTitle;
             document.getElementById('logoutBtn').innerText = t.logoutBtn;
             
+            // محاذاة النص والـ Labels بناءً على اللغة المحددة
+            const textDir = currentLang === 'ar' ? 'text-right' : 'text-left';
+            const removeDir = currentLang === 'ar' ? 'text-left' : 'text-right';
+            
+            const inputs = ['loginId', 'loginPass', 'signupId', 'signupName', 'signupPass'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove(removeDir);
+                    el.classList.add(textDir);
+                }
+            });
+
+            const labels = ['lblLoginId', 'lblLoginPass', 'lblSignupId', 'lblSignupName', 'lblSignupPass'];
+            labels.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove(removeDir);
+                    el.classList.add(textDir);
+                }
+            });
+            
             if (currentUser) {
                 updateRoleDisplay();
+                if (String(currentUser.player_id) === OWNER_ID || currentUser.role === 'r5') {
+                    loadPendingUsers();
+                }
             }
         }
 
         function updateRoleDisplay() {
             const t = translations[currentLang];
-            if (String(currentUser.player_id) === OWNER_ID) {
+            if (String(currentUser.player_id) === OWNER_ID || currentUser.role === 'r5') {
                 document.getElementById('roleStatus').innerText = t.roleStatus + t.ownerRoleText;
             } else {
-                document.getElementById('roleStatus').innerText = t.roleStatus + (currentUser.role === 'r4' ? 'R4' : 'Member');
+                document.getElementById('roleStatus').innerText = t.roleStatus + (currentUser.role === 'r4' ? 'R4' : t.memberRoleText);
             }
         }
 
@@ -210,7 +301,6 @@
             document.getElementById('signupForm').classList.toggle('hidden', tab !== 'signup');
             document.getElementById('pendingMessage').classList.add('hidden');
             
-            const t = translations[currentLang];
             if (tab === 'login') {
                 document.getElementById('tabLogin').className = "flex-1 pb-3 text-sm font-bold border-b-2 border-amber-500 text-amber-500 transition-all";
                 document.getElementById('tabSignup').className = "flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all";
@@ -226,30 +316,19 @@
             const password = document.getElementById('loginPass').value;
             const t = translations[currentLang];
 
-            // الدخول المباشر للمالك
-            if (playerId === OWNER_ID) {
-                if (password !== OWNER_PASSWORD) {
-                    alert(t.msgError);
-                    return;
-                }
-                let { data: ownerData } = await supabase.from('profiles').select('*').eq('player_id', OWNER_ID).maybeSingle();
-                if (!ownerData) {
-                    const { data: newOwner } = await supabase.from('profiles').insert([{ player_id: OWNER_ID, in_game_name: 'ONe | MR AMR', password: OWNER_PASSWORD, status: 'approved', role: 'r5' }]).select().single();
-                    ownerData = newOwner;
-                }
-                currentUser = ownerData;
-            } else {
-                const { data, error } = await supabase.from('profiles').select('*').eq('player_id', playerId).maybeSingle();
-                if (error || !data || data.password !== password) {
-                    alert(t.msgError);
-                    return;
-                }
-                if (data.status === 'pending') {
-                    alert(t.msgPending);
-                    return;
-                }
-                currentUser = data;
+            const { data, error } = await supabase.from('profiles').select('*').eq('player_id', playerId).maybeSingle();
+            
+            if (error || !data || data.password !== password) {
+                alert(t.msgError);
+                return;
             }
+
+            if (data.status === 'pending') {
+                alert(t.msgPending);
+                return;
+            }
+
+            currentUser = data;
 
             document.getElementById('authCard').classList.add('hidden');
             document.getElementById('dashboardSection').classList.remove('hidden');
@@ -270,13 +349,13 @@
             const pendingList = document.getElementById('pendingList');
             const t = translations[currentLang];
             
-            document.getElementById('pendingCount').innerText = `${data ? data.length : 0} ${currentLang === 'ar' ? 'طلبات' : 'Requests'}`;
+            document.getElementById('pendingCount').innerText = `${data ? data.length : 0} ${t.textPendingCount}`;
             
             if (data && data.length > 0) {
                 pendingList.innerHTML = data.map(user => `
                     <div class="flex justify-between items-center bg-slate-900 p-3 rounded-lg border border-slate-800">
                         <span class="text-sm font-bold text-white">${user.in_game_name}</span>
-                        <button onclick="approveUser('${user.player_id}')" class="bg-emerald-600 text-xs text-black font-bold px-3 py-1 rounded hover:bg-emerald-500 transition-all">${currentLang === 'ar' ? 'تفعيل' : 'Approve'}</button>
+                        <button onclick="approveUser('${user.player_id}')" class="bg-emerald-600 text-xs text-black font-bold px-3 py-1.5 rounded hover:bg-emerald-500 transition-all">${t.textApproveBtn}</button>
                     </div>
                 `).join('');
             } else {
