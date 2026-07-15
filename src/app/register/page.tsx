@@ -10,7 +10,6 @@ export default function RegisterPage() {
 
           const [message, setMessage] = useState("");
             const [success, setSuccess] = useState(false);
-
               async function handleRegister() {
                   if (password !== confirmPassword) {
                         setSuccess(false);

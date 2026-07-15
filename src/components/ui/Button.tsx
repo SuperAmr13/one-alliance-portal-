@@ -1,27 +1,36 @@
+import Link from "next/link";
+
 type ButtonProps = {
-      children: React.ReactNode;
-        variant?: "primary" | "secondary";
-          onClick?: () => void;
+  children: React.ReactNode;
+    href?: string;
+      variant?: "primary" | "secondary";
+        onClick?: () => void;
+          type?: "button" | "submit";
           };
 
           export default function Button({
             children,
-              variant = "primary",
-                onClick,
-                }: ButtonProps) {
-                  const base =
-                      "rounded-xl px-6 py-3 font-semibold transition-all duration-200";
+              href,
+                variant = "primary",
+                  onClick,
+                    type = "button",
+                    }: ButtonProps) {
+                      const classes =
+                          variant === "primary"
+                                ? "rounded-xl bg-blue-600 hover:bg-blue-700 px-6 py-3 text-white font-semibold transition duration-200"
+                                      : "rounded-xl border border-blue-700 bg-transparent hover:bg-blue-900/20 px-6 py-3 text-blue-300 font-semibold transition duration-200";
 
-                        const styles = {
-                            primary:
-                                  "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20",
-                                      secondary:
-                                            "border border-blue-500 text-blue-400 hover:bg-blue-500/10",
-                                              };
-
-                                                return (
-                                                    <button onClick={onClick} className={`${base} ${styles[variant]}`}>
+                                        if (href) {
+                                            return (
+                                                  <Link href={href} className={classes}>
                                                           {children}
-                                                              </button>
-                                                                );
-                                                                }
+                                                                </Link>
+                                                                    );
+                                                                      }
+
+                                                                        return (
+                                                                            <button type={type} onClick={onClick} className={classes}>
+                                                                                  {children}
+                                                                                      </button>
+                                                                                        );
+                                                                                        }

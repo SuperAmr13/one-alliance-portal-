@@ -8,12 +8,14 @@ export default function Navbar() {
                   </h1>
 
                 <div className="flex items-center gap-3">
-                      <Button>Enter Portal</Button>
+  <Button href="/login">
+    Enter Portal
+  </Button>
 
-                        <Button variant="secondary">
-                            Request Access
-                              </Button>
-                              </div>
+  <Button href="/register" variant="secondary">
+    Request Access
+  </Button>
+</div> 
             </div>
         </nav>
     );
