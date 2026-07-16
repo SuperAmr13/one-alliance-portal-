@@ -31,7 +31,8 @@ export default function LoginPage() {
         return;
       }
 
-      alert(`Welcome ${data.user.inGameName}!`);
+      localStorage.setItem("user", JSON.stringify(data.user));
+window.location.href = "/"; 
     } catch {
       setError("Something went wrong.");
     } finally {
