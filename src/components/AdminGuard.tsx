@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 
 type User = {
+  id: string;
+  playerId: string;
+  inGameName: string;
   role: string;
 };
 
@@ -11,36 +14,49 @@ export default function AdminGuard({
 }: {
   children: React.ReactNode;
 }) {
+  const [loading, setLoading] = useState(true);
   const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    async function checkUser() {
+      try {
+        const res = await fetch("/api/me");
 
-    if (!storedUser) {
-      window.location.href = "/";
-      return;
+        if (!res.ok) {
+          window.location.href = "/login";
+          return;
+        }
+
+        const data = await res.json();
+
+        if (
+          data.user.role === "OWNER" ||
+          data.user.role === "R5" ||
+          data.user.role === "R4"
+        ) {
+          setAllowed(true);
+        } else {
+          window.location.href = "/";
+        }
+      } catch {
+        window.location.href = "/login";
+      } finally {
+        setLoading(false);
+      }
     }
 
-    const user: User = JSON.parse(storedUser);
-
-    if (
-      user.role === "OWNER" ||
-      user.role === "R5" ||
-      user.role === "R4"
-    ) {
-      setAllowed(true);
-    } else {
-      window.location.href = "/";
-    }
+    checkUser();
   }, []);
 
-  if (!allowed) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#050816] text-white">
         Checking permissions...
       </div>
     );
   }
+
+  if (!allowed) return null;
 
   return <>{children}</>;
 }
