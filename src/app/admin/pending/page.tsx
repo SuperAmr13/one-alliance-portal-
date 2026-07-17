@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AdminGuard from "@/components/AdminGuard";
 
 type PendingUser = {
   id: string;
@@ -75,58 +76,60 @@ export default function PendingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#050816] text-white p-8">
-      <h1 className="text-4xl font-bold text-blue-400 mb-8">
-        Pending Requests
-      </h1>
+    <AdminGuard>
+      <main className="min-h-screen bg-[#050816] text-white p-8">
+        <h1 className="text-4xl font-bold text-blue-400 mb-8">
+          Pending Requests
+        </h1>
 
-      {loading && <p className="text-gray-400">Loading...</p>}
+        {loading && <p className="text-gray-400">Loading...</p>}
 
-      {!loading && users.length === 0 && (
-        <p className="text-gray-400">No pending requests.</p>
-      )}
+        {!loading && users.length === 0 && (
+          <p className="text-gray-400">No pending requests.</p>
+        )}
 
-      <div className="grid gap-6">
-        {users.map((user) => (
-          <div
-            key={user.id}
-            className="rounded-xl border border-blue-800 bg-[#0b1024] p-6"
-          >
-            <h2 className="text-2xl font-bold text-blue-400">
-              {user.inGameName}
-            </h2>
+        <div className="grid gap-6">
+          {users.map((user) => (
+            <div
+              key={user.id}
+              className="rounded-xl border border-blue-800 bg-[#0b1024] p-6"
+            >
+              <h2 className="text-2xl font-bold text-blue-400">
+                {user.inGameName}
+              </h2>
 
-            <p className="mt-2">
-              <strong>Player ID:</strong> {user.playerId}
-            </p>
+              <p className="mt-2">
+                <strong>Player ID:</strong> {user.playerId}
+              </p>
 
-            <p>
-              <strong>Requested Role:</strong> {user.role}
-            </p>
+              <p>
+                <strong>Requested Role:</strong> {user.role}
+              </p>
 
-            <p>
-              <strong>Registered:</strong>{" "}
-              {new Date(user.createdAt).toLocaleString()}
-            </p>
+              <p>
+                <strong>Registered:</strong>{" "}
+                {new Date(user.createdAt).toLocaleString()}
+              </p>
 
-            <div className="mt-6 flex gap-4">
-              <button
-                onClick={() => approveUser(user.id)}
-                className="flex-1 rounded-lg bg-green-600 hover:bg-green-700 py-2 transition"
-              >
-                Approve
-              </button>
+              <div className="mt-6 flex gap-4">
+                <button
+                  onClick={() => approveUser(user.id)}
+                  className="flex-1 rounded-lg bg-green-600 hover:bg-green-700 py-2 transition"
+                >
+                  Approve
+                </button>
 
-              <button
-                onClick={() => rejectUser(user.id)}
-                className="flex-1 rounded-lg bg-red-600 hover:bg-red-700 py-2 transition"
-              >
-                Reject
-              </button>
+                <button
+                  onClick={() => rejectUser(user.id)}
+                  className="flex-1 rounded-lg bg-red-600 hover:bg-red-700 py-2 transition"
+                >
+                  Reject
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </main>
+          ))}
+        </div>
+      </main>
+    </AdminGuard>
   );
 }
