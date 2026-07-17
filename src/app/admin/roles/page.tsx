@@ -1,0 +1,111 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import AdminGuard from "@/components/AdminGuard";
+
+type Member = {
+  id: string;
+  playerId: string;
+  inGameName: string;
+  role: string;
+};
+
+export default function RolesPage() {
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  async function fetchMembers() {
+    try {
+      const res = await fetch("/api/admin/members");
+      const data = await res.json();
+      setMembers(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function updateRole(id: string, role: string) {
+    try {
+      const res = await fetch("/api/admin/role", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, role }),
+      });
+
+      if (!res.ok) {
+        alert("Failed to update role.");
+        return;
+      }
+
+      alert("Role updated successfully.");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong.");
+    }
+  }
+
+  return (
+    <AdminGuard>
+      <main className="min-h-screen bg-[#050816] text-white p-8">
+        <h1 className="text-4xl font-bold text-blue-400 mb-8">
+          Roles Management
+        </h1>
+
+        {loading && <p>Loading...</p>}
+
+        <div className="grid gap-6">
+          {members.map((member) => (
+            <div
+              key={member.id}
+              className="rounded-xl border border-blue-800 bg-[#0b1024] p-6"
+            >
+              <h2 className="text-2xl font-bold text-blue-400">
+                {member.inGameName}
+              </h2>
+
+              <p className="mt-2">
+                <strong>Player ID:</strong> {member.playerId}
+              </p>
+
+              <div className="mt-4 flex gap-4 items-center">
+                <select
+                  defaultValue={member.role}
+                  onChange={(e) => {
+                    const role = e.target.value;
+
+                    setMembers((prev) =>
+                      prev.map((m) =>
+                        m.id === member.id ? { ...m, role } : m
+                      )
+                    );
+                  }}
+                  className="rounded-lg bg-[#050816] border border-blue-700 px-4 py-2"
+                >
+                  <option value="MEMBER">MEMBER</option>
+                  <option value="R4">R4</option>
+                  <option value="R5">R5</option>
+                  <option value="OWNER">OWNER</option>
+                </select>
+
+                <button
+                  onClick={() => updateRole(member.id, member.role)}
+                  className="rounded-lg bg-blue-600 hover:bg-blue-700 px-5 py-2 transition"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </AdminGuard>
+  );
+}
