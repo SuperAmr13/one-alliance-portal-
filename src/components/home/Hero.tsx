@@ -4,20 +4,45 @@ import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 
 type User = {
+  id: string;
+  playerId: string;
   inGameName: string;
   role: "OWNER" | "R5" | "R4" | "MEMBER";
 };
 
 export default function Hero() {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
+    async function loadUser() {
+      try {
+        const res = await fetch("/api/me", {
+          credentials: "include",
+          cache: "no-store",
+        });
 
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    loadUser();
   }, []);
+
+  if (loading) {
+    return (
+      <section className="min-h-screen flex items-center justify-center text-white">
+        Loading...
+      </section>
+    );
+  }
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center text-center px-6">
@@ -32,19 +57,20 @@ export default function Hero() {
       {user ? (
         <>
           <p className="mt-8 text-2xl text-white">
-            Welcome, <span className="text-blue-400">{user.inGameName}</span>
+            Welcome,{" "}
+            <span className="text-blue-400">{user.inGameName}</span>
           </p>
 
-          <div className="mt-8">
+          <div className="mt-10 flex gap-4 flex-wrap justify-center">
+            <Button href="/portal">
+              Portal
+            </Button>
+
             {(user.role === "OWNER" ||
               user.role === "R5" ||
-              user.role === "R4") ? (
+              user.role === "R4") && (
               <Button href="/admin">
-                Go to Admin Dashboard
-              </Button>
-            ) : (
-              <Button href="/portal">
-                Go to Portal
+                Admin Dashboard
               </Button>
             )}
           </div>
