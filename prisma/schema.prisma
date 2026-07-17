@@ -1,12 +1,11 @@
 generator client {
   provider = "prisma-client-js"
-} 
-
-datasource db {
-    provider = "postgresql"
-      url      = env("DATABASE_URL")
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 enum Role {
   MEMBER
@@ -24,6 +23,34 @@ model User {
   role         Role     @default(MEMBER)
   approved     Boolean  @default(false)
 
+  news         News[]
+  sessions     Session[]
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model News {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  pinned    Boolean  @default(false)
+
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
 }
