@@ -1,11 +1,13 @@
 import MemberCard from "./MemberCard";
 
 type Member = {
-  id: string;
-  playerId: string;
-  inGameName: string;
-  role: "MEMBER" | "R4" | "R5" | "OWNER";
-};
+    id: string;
+      playerId: string;
+        inGameName: string;
+          role: "MEMBER" | "R4" | "R5" | "OWNER";
+            approved: boolean;
+              createdAt: string;
+              };
 
 type MembersGridProps = {
   members: Member[];
