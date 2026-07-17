@@ -31,8 +31,7 @@ export default function LoginPage() {
         return;
       }
 
-      localStorage.setItem("user", JSON.stringify(data.user));
-window.location.href = "/"; 
+      window.location.href = "/";
     } catch {
       setError("Something went wrong.");
     } finally {
