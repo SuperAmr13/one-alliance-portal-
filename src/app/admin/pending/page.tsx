@@ -52,20 +52,38 @@ export default function PendingPage() {
     }
   }
 
+  async function rejectUser(id: string) {
+    try {
+      const res = await fetch("/api/admin/reject", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!res.ok) {
+        alert("Failed to reject user.");
+        return;
+      }
+
+      setUsers((prev) => prev.filter((user) => user.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong.");
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#050816] text-white p-8">
       <h1 className="text-4xl font-bold text-blue-400 mb-8">
         Pending Requests
       </h1>
 
-      {loading && (
-        <p className="text-gray-400">Loading...</p>
-      )}
+      {loading && <p className="text-gray-400">Loading...</p>}
 
       {!loading && users.length === 0 && (
-        <p className="text-gray-400">
-          No pending requests.
-        </p>
+        <p className="text-gray-400">No pending requests.</p>
       )}
 
       <div className="grid gap-6">
@@ -94,13 +112,14 @@ export default function PendingPage() {
             <div className="mt-6 flex gap-4">
               <button
                 onClick={() => approveUser(user.id)}
-                className="flex-1 rounded-lg bg-green-600 hover:bg-green-700 py-2"
+                className="flex-1 rounded-lg bg-green-600 hover:bg-green-700 py-2 transition"
               >
                 Approve
               </button>
 
               <button
-                className="flex-1 rounded-lg bg-red-600 hover:bg-red-700 py-2"
+                onClick={() => rejectUser(user.id)}
+                className="flex-1 rounded-lg bg-red-600 hover:bg-red-700 py-2 transition"
               >
                 Reject
               </button>
