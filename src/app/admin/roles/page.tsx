@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminGuard from "@/components/AdminGuard";
 
 type Member = {
@@ -13,6 +13,7 @@ type Member = {
 export default function RolesPage() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchMembers();
@@ -29,6 +30,14 @@ export default function RolesPage() {
       setLoading(false);
     }
   }
+
+  const filteredMembers = useMemo(() => {
+    return members.filter(
+      (member) =>
+        member.inGameName.toLowerCase().includes(search.toLowerCase()) ||
+        member.playerId.includes(search)
+    );
+  }, [members, search]);
 
   async function updateRole(id: string, role: string) {
     try {
@@ -59,10 +68,22 @@ export default function RolesPage() {
           Roles Management
         </h1>
 
+        <input
+          type="text"
+          placeholder="Search by name or Player ID..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full mb-8 rounded-lg bg-[#0b1024] border border-blue-700 px-4 py-3 outline-none"
+        />
+
         {loading && <p>Loading...</p>}
 
+        {!loading && filteredMembers.length === 0 && (
+          <p className="text-gray-400">No members found.</p>
+        )}
+
         <div className="grid gap-6">
-          {members.map((member) => (
+          {filteredMembers.map((member) => (
             <div
               key={member.id}
               className="rounded-xl border border-blue-800 bg-[#0b1024] p-6"
@@ -77,7 +98,7 @@ export default function RolesPage() {
 
               <div className="mt-4 flex gap-4 items-center">
                 <select
-                  defaultValue={member.role}
+                  value={member.role}
                   onChange={(e) => {
                     const role = e.target.value;
 
