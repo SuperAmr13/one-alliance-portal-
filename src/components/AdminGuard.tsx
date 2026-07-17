@@ -20,25 +20,36 @@ export default function AdminGuard({
   useEffect(() => {
     async function checkUser() {
       try {
-        const res = await fetch("/api/me");
+        const res = await fetch("/api/me", {
+          credentials: "include",
+          cache: "no-store",
+        });
+
+        console.log("Status:", res.status);
 
         if (!res.ok) {
+          console.log("Not authenticated");
           window.location.href = "/login";
           return;
         }
 
         const data = await res.json();
 
+        console.log("API Response:", data);
+
         if (
-          data.user.role === "OWNER" ||
-          data.user.role === "R5" ||
-          data.user.role === "R4"
+          data.user?.role === "OWNER" ||
+          data.user?.role === "R5" ||
+          data.user?.role === "R4"
         ) {
+          console.log("✅ Access granted");
           setAllowed(true);
         } else {
+          console.log("❌ Access denied");
           window.location.href = "/";
         }
-      } catch {
+      } catch (err) {
+        console.error("AdminGuard Error:", err);
         window.location.href = "/login";
       } finally {
         setLoading(false);
@@ -56,7 +67,9 @@ export default function AdminGuard({
     );
   }
 
-  if (!allowed) return null;
+  if (!allowed) {
+    return null;
+  }
 
   return <>{children}</>;
 }
