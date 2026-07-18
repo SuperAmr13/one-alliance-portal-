@@ -45,23 +45,6 @@ export default function AdminPage() {
             </Link>
           </div>
 
-          <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-6 hover:border-blue-500 transition">
-            <h2 className="text-xl font-bold mb-2">
-              Roles & Permissions
-            </h2>
-
-            <p className="text-gray-400 mb-6">
-              Configure ranks and permissions.
-            </p>
-
-            <Link
-              href="/admin/roles"
-              className="block w-full rounded-lg bg-blue-600 hover:bg-blue-700 py-3 text-center font-semibold transition"
-            >
-              Open
-            </Link>
-          </div>
-
         </div>
       </main>
     </AdminGuard>
