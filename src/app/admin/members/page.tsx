@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import StatsCards from "@/components/admin/StatsCards";
+import MembersStats from "@/components/admin/MembersStats"; 
 import MembersHeader from "@/components/admin/MembersHeader";
 import MembersSearch from "@/components/admin/MembersSearch";
 import MembersFilters from "@/components/admin/MembersFilters";
@@ -27,6 +27,7 @@ export default function MembersPage() {
 
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
+  const [sort, setSort] = useState("name");
 
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [selectedRole, setSelectedRole] = useState("MEMBER");
@@ -148,23 +149,25 @@ export default function MembersPage() {
     <div className="space-y-6">
       <MembersHeader total={members.length} />
 
-      <StatsCards
-        total={members.length}
-        owners={owners}
-        r5={r5}
-        r4={r4}
-        members={normalMembers}
-      />
+      <MembersStats
+  total={members.length}
+  owner={owners}
+  r5={r5}
+  r4={r4}
+  member={normalMembers}
+/> 
 
       <MembersSearch
         value={search}
         onChange={setSearch}
       />
 
-      <MembersFilters
-        value={roleFilter}
-        onChange={setRoleFilter}
-      />
+       <MembersFilters
+  role={roleFilter}
+  sort={sort}
+  onRoleChange={setRoleFilter}
+  onSortChange={setSort}
+/> 
 
       {loading ? (
         <div className="py-16 text-center text-zinc-400">

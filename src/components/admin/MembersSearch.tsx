@@ -1,19 +1,21 @@
-type MembersSearchProps = {
-      value: string;
-        onChange: (value: string) => void;
-        };
+type Props = {
+  value: string;
+  onChange: (value: string) => void;
+};
 
-        export default function MembersSearch({
-          value,
-            onChange,
-            }: MembersSearchProps) {
-              return (
-                  <input
-                        type="text"
-                              value={value}
-                                    placeholder="Search by In Game Name or Player ID..."
-                                          onChange={(e) => onChange(e.target.value)}
-                                                className="mb-6 w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-blue-500"
-                                                    />
-                                                      );
-                                                      }
+export default function MembersSearch({
+  value,
+  onChange,
+}: Props) {
+  return (
+    <div className="mb-6">
+      <input
+        type="text"
+        placeholder="Search by in-game name or Player ID..."
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-xl border border-blue-900/40 bg-[#0f172a] px-4 py-3 text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none"
+      />
+    </div>
+  );
+}

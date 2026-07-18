@@ -1,31 +1,28 @@
-type MembersHeaderProps = {
-      total: number;
-      };
+type Props = {
+  total: number;
+};
 
-      export default function MembersHeader({
-        total,
-        }: MembersHeaderProps) {
-          return (
-              <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                    <div>
-                            <h1 className="text-3xl font-bold text-white">
-                                      Members
-                                              </h1>
+export default function MembersHeader({ total }: Props) {
+  return (
+    <div className="mb-8">
+      <h1 className="text-3xl font-bold tracking-tight text-blue-400">
+        Alliance Members
+      </h1>
 
-                                                      <p className="mt-2 text-zinc-400">
-                                                                Manage alliance members and their information.
-                                                                        </p>
-                                                                              </div>
+      <p className="mt-2 text-sm text-zinc-400">
+        Manage members, edit information, assign roles, and control alliance
+        access.
+      </p>
 
-                                                                                    <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
-                                                                                            <p className="text-sm text-zinc-400">
-                                                                                                      Total Members
-                                                                                                              </p>
-
-                                                                                                                      <h2 className="mt-1 text-3xl font-bold text-white">
-                                                                                                                                {total}
-                                                                                                                                        </h2>
-                                                                                                                                              </div>
-                                                                                                                                                  </div>
-                                                                                                                                                    );
-                                                                                                                                                    }
+      <div className="mt-4 inline-flex items-center rounded-full border border-blue-900/40 bg-[#0f172a] px-4 py-2">
+        <span className="text-sm text-zinc-300">
+          Showing{" "}
+          <span className="font-bold text-blue-400">
+            {total}
+          </span>{" "}
+          members
+        </span>
+      </div>
+    </div>
+  );
+}
