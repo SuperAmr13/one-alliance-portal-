@@ -34,7 +34,7 @@ export default function MemberCard({
   onDelete,
 }: Props) {
   return (
-    <div className="rounded-2xl border border-blue-900/40 bg-[#0f172a] p-6 shadow-lg transition-all duration-200 hover:border-blue-500 hover:shadow-blue-900/20">
+    <div className="rounded-2xl border border-blue-500/60 bg-[#0f172a] p-6 shadow-lg shadow-black/30 transition-all duration-300 hover:-translate-y-1 hover:border-blue-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.15)]">
       <div className="flex items-start justify-between">
         <div>
           <h2 className="text-xl font-bold text-blue-400">
@@ -45,7 +45,7 @@ export default function MemberCard({
             Player ID
           </p>
 
-          <p className="font-mono text-white">
+          <p className="font-mono text-white break-all">
             {member.playerId}
           </p>
         </div>
@@ -59,7 +59,7 @@ export default function MemberCard({
         </span>
       </div>
 
-      <div className="mt-6 border-t border-blue-900/30 pt-5">
+      <div className="mt-6 border-t border-blue-500/20 pt-5">
         <p className="text-xs uppercase tracking-wider text-zinc-500">
           Current Role
         </p>
@@ -72,21 +72,21 @@ export default function MemberCard({
       <div className="mt-6 grid grid-cols-3 gap-3">
         <button
           onClick={() => onEdit(member)}
-          className="rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white transition hover:bg-blue-500"
+          className="rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white transition duration-200 hover:bg-blue-500"
         >
           Edit
         </button>
 
         <button
           onClick={() => onRole(member)}
-          className="rounded-xl bg-amber-500 px-4 py-2 font-semibold text-black transition hover:bg-amber-400"
+          className="rounded-xl bg-amber-500 px-4 py-2 font-semibold text-black transition duration-200 hover:bg-amber-400"
         >
           Role
         </button>
 
         <button
           onClick={() => onDelete(member)}
-          className="rounded-xl bg-red-600 px-4 py-2 font-semibold text-white transition hover:bg-red-500"
+          className="rounded-xl bg-red-600 px-4 py-2 font-semibold text-white transition duration-200 hover:bg-red-500"
         >
           Delete
         </button>

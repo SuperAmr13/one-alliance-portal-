@@ -24,15 +24,14 @@ export default function MembersGrid({
 }: Props) {
   if (members.length === 0) {
     return (
-      <div className="rounded-2xl border border-blue-900/40 bg-[#0f172a] p-10 text-center text-zinc-400">
+      <div className="rounded-2xl border border-blue-500/60 shadow-lg shadow-black/30 bg-[#0f172a] p-10 text-center text-zinc-400">
         No members found.
       </div>
     );
   }
 
   return (
-    <div className="px-4 md:px-0">
-  <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3"> 
+    <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
       {members.map((member) => (
         <MemberCard
           key={member.id}
@@ -42,7 +41,6 @@ export default function MembersGrid({
           onDelete={onDelete}
         />
       ))}
-          </div>
-            </div>
-            );
-            }
+    </div>
+  );
+}

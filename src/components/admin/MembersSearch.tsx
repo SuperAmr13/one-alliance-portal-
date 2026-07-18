@@ -11,10 +11,10 @@ export default function MembersSearch({
     <div className="mb-6">
       <input
         type="text"
-        placeholder="Search by in-game name or Player ID..."
+        placeholder="Search by In-Game Name or Player ID..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-blue-900/40 bg-[#0f172a] px-4 py-3 text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none"
+        className="w-full rounded-2xl border border-blue-500/60 bg-[#0f172a] px-5 py-3 text-white shadow-lg shadow-black/30 transition duration-200 placeholder:text-zinc-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
       />
     </div>
   );

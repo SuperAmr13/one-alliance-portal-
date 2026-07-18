@@ -16,7 +16,7 @@ export default function MembersFilters({
       <select
         value={role}
         onChange={(e) => onRoleChange(e.target.value)}
-        className="rounded-xl border border-blue-900/40 bg-[#0f172a] px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+        className="rounded-2xl border border-blue-500/60 bg-[#0f172a] px-5 py-3 text-white shadow-lg shadow-black/30 transition duration-200 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
       >
         <option value="ALL">All Roles</option>
         <option value="OWNER">OWNER</option>
@@ -28,7 +28,7 @@ export default function MembersFilters({
       <select
         value={sort}
         onChange={(e) => onSortChange(e.target.value)}
-        className="rounded-xl border border-blue-900/40 bg-[#0f172a] px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+        className="rounded-2xl border border-blue-500/60 bg-[#0f172a] px-5 py-3 text-white shadow-lg shadow-black/30 transition duration-200 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
       >
         <option value="name">Sort by Name</option>
         <option value="role">Sort by Role</option>
