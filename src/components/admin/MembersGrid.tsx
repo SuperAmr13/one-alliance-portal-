@@ -31,7 +31,8 @@ export default function MembersGrid({
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <div className="px-4 md:px-0">
+  <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3"> 
       {members.map((member) => (
         <MemberCard
           key={member.id}
@@ -41,6 +42,7 @@ export default function MembersGrid({
           onDelete={onDelete}
         />
       ))}
-    </div>
-  );
-}
+          </div>
+            </div>
+            );
+            }

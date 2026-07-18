@@ -146,7 +146,8 @@ export default function MembersPage() {
   }
 
   return (
-    <div className="space-y-6">
+  <main className="min-h-screen bg-[#050816] text-white p-8">
+    <div className="space-y-6"> 
       <MembersHeader total={members.length} />
 
       <MembersStats
@@ -219,6 +220,7 @@ export default function MembersPage() {
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
       />
-    </div>
-  );
+        </div>
+  </main>
+);
 }
