@@ -14,6 +14,12 @@ enum Role {
   OWNER
 }
 
+enum SquadType {
+  AIRCRAFT
+  TANKS
+  MISSILES
+}
+
 model User {
   id           String   @id @default(cuid())
   playerId     String   @unique
@@ -25,9 +31,31 @@ model User {
 
   news         News[]
   sessions     Session[]
+  reports      Report[]
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model Report {
+  id               String      @id @default(cuid())
+
+  userId           String
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  weekNumber       Int
+
+  heroPower        BigInt
+  firstSquadPower  BigInt
+  firstSquadType   SquadType
+
+  heroPowerImage   String
+  wallImage        String
+
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@unique([userId, weekNumber])
 }
 
 model News {
