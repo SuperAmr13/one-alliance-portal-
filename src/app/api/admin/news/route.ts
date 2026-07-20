@@ -1,68 +1,62 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import {
+  adminRoute,
+  badRequest,
+  forbidden,
+} from "@/lib/api";
 
 export async function GET() {
-  try {
-      const news = await prisma.news.findMany({
-            include: {
-                    author: {
-                              select: {
-                                          id: true,
-                                                      inGameName: true,
-                                                                  role: true,
-                                                                            },
-                                                                                    },
-                                                                                          },
-                                                                                                orderBy: [
-                                                                                                        {
-                                                                                                                  pinned: "desc",
-                                                                                                                          },
-                                                                                                                                  {
-                                                                                                                                            createdAt: "desc",
-                                                                                                                                                    },
-                                                                                                                                                          ],
-                                                                                                                                                              });
+  return adminRoute(async (currentUser) => {
+    if (!["OWNER", "R5", "R4"].includes(currentUser.role)) {
+      forbidden("You don't have permission.");
+    }
 
-                                                                                                                                                                  return NextResponse.json(news);
-                                                                                                                                                                    } catch (error) {
-                                                                                                                                                                        console.error(error);
+    const news = await prisma.news.findMany({
+      include: {
+        author: {
+          select: {
+            id: true,
+            inGameName: true,
+            role: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          pinned: "desc",
+        },
+        {
+          createdAt: "desc",
+        },
+      ],
+    });
 
-                                                                                                                                                                            return NextResponse.json(
-                                                                                                                                                                                  { error: "Failed to load news." },
-                                                                                                                                                                                        { status: 500 }
-                                                                                                                                                                                            );
-                                                                                                                                                                                              }
-                                                                                                                                                                                              }
+    return news;
+  });
+}
 
-                                                                                                                                                                                              export async function POST(req: NextRequest) {
-                                                                                                                                                                                                try {
-                                                                                                                                                                                                    const body = await req.json();
+export async function POST(req: NextRequest) {
+  return adminRoute(async (currentUser) => {
+    if (!["OWNER", "R5", "R4"].includes(currentUser.role)) {
+      forbidden("You don't have permission.");
+    }
 
-                                                                                                                                                                                                        const { title, content, pinned, authorId } = body;
+    const { title, content, pinned } = await req.json();
 
-                                                                                                                                                                                                            if (!title || !content || !authorId) {
-                                                                                                                                                                                                                  return NextResponse.json(
-                                                                                                                                                                                                                          { error: "Missing required fields." },
-                                                                                                                                                                                                                                  { status: 400 }
-                                                                                                                                                                                                                                        );
-                                                                                                                                                                                                                                            }
+    if (!title || !content) {
+      badRequest("Missing required fields.");
+    }
 
-                                                                                                                                                                                                                                                const news = await prisma.news.create({
-                                                                                                                                                                                                                                                      data: {
-                                                                                                                                                                                                                                                              title,
-                                                                                                                                                                                                                                                                      content,
-                                                                                                                                                                                                                                                                              pinned: pinned ?? false,
-                                                                                                                                                                                                                                                                                      authorId,
-                                                                                                                                                                                                                                                                                            },
-                                                                                                                                                                                                                                                                                                });
+    const news = await prisma.news.create({
+      data: {
+        title,
+        content,
+        pinned: pinned ?? false,
+        authorId: currentUser.id,
+      },
+    });
 
-                                                                                                                                                                                                                                                                                                    return NextResponse.json(news);
-                                                                                                                                                                                                                                                                                                      } catch (error) {
-                                                                                                                                                                                                                                                                                                          console.error(error);
-
-                                                                                                                                                                                                                                                                                                              return NextResponse.json(
-                                                                                                                                                                                                                                                                                                                    { error: "Failed to create news." },
-                                                                                                                                                                                                                                                                                                                          { status: 500 }
-                                                                                                                                                                                                                                                                                                                              );
-                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                }
+    return news;
+  });
+}

@@ -1,43 +1,30 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/session";
+import {
+  adminRoute,
+  badRequest,
+  forbidden,
+} from "@/lib/api";
 
 export async function POST(req: Request) {
-  try {
-    const currentUser = await getCurrentUser();
-
-    if (
-      !currentUser ||
-      !["OWNER", "R5", "R4"].includes(currentUser.role)
-    ) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 403 }
-      );
+  return adminRoute(async (currentUser) => {
+    if (!["OWNER", "R5", "R4"].includes(currentUser.role)) {
+      forbidden("You don't have permission.");
     }
 
     const { id } = await req.json();
 
     if (!id) {
-      return NextResponse.json(
-        { error: "User ID is required." },
-        { status: 400 }
-      );
+      badRequest("User ID is required.");
     }
 
     await prisma.user.delete({
-      where: { id },
+      where: {
+        id,
+      },
     });
 
-    return NextResponse.json({
+    return {
       success: true,
-    });
-  } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 }
-    );
-  }
+    };
+  });
 }

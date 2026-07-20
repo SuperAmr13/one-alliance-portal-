@@ -1,19 +1,10 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/session";
+import { adminRoute, forbidden } from "@/lib/api";
 
 export async function GET() {
-  try {
-    const currentUser = await getCurrentUser();
-
-    if (
-      !currentUser ||
-      !["OWNER", "R5", "R4"].includes(currentUser.role)
-    ) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 403 }
-      );
+  return adminRoute(async (currentUser) => {
+    if (!["OWNER", "R5", "R4"].includes(currentUser.role)) {
+      forbidden("Unauthorized.");
     }
 
     const users = await prisma.user.findMany({
@@ -33,13 +24,6 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(users);
-  } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 }
-    );
-  }
+    return users;
+  });
 }

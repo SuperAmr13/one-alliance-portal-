@@ -1,41 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/session";
+import {
+  adminRoute,
+  badRequest,
+  forbidden,
+  notFound,
+} from "@/lib/api";
 
 export async function POST(req: NextRequest) {
-  try {
-    const currentUser = await getCurrentUser();
-
-    if (!currentUser) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 401 }
-      );
-    }
-
+  return adminRoute(async (currentUser) => {
     if (!["OWNER", "R5"].includes(currentUser.role)) {
-      return NextResponse.json(
-        { error: "You don't have permission." },
-        { status: 403 }
-      );
+      forbidden("You don't have permission.");
     }
 
     const { id, role } = await req.json();
 
     if (!id || !role) {
-      return NextResponse.json(
-        { error: "Missing data." },
-        { status: 400 }
-      );
+      badRequest("Missing data.");
     }
 
     const allowedRoles = ["MEMBER", "R4", "R5", "OWNER"];
 
     if (!allowedRoles.includes(role)) {
-      return NextResponse.json(
-        { error: "Invalid role." },
-        { status: 400 }
-      );
+      badRequest("Invalid role.");
     }
 
     const targetUser = await prisma.user.findUnique({
@@ -43,18 +30,12 @@ export async function POST(req: NextRequest) {
     });
 
     if (!targetUser) {
-      return NextResponse.json(
-        { error: "User not found." },
-        { status: 404 }
-      );
+      notFound("User not found.");
     }
 
     // لا يسمح بتغيير رتبتك بنفسك
     if (targetUser.id === currentUser.id) {
-      return NextResponse.json(
-        { error: "You can't change your own role." },
-        { status: 403 }
-      );
+      forbidden("You can't change your own role.");
     }
 
     // R5 لا يستطيع إدارة OWNER أو R5
@@ -63,17 +44,11 @@ export async function POST(req: NextRequest) {
         targetUser.role === "OWNER" ||
         targetUser.role === "R5"
       ) {
-        return NextResponse.json(
-          { error: "You can't manage this user." },
-          { status: 403 }
-        );
+        forbidden("You can't manage this user.");
       }
 
       if (!["MEMBER", "R4"].includes(role)) {
-        return NextResponse.json(
-          { error: "R5 can only assign MEMBER or R4." },
-          { status: 403 }
-        );
+        forbidden("R5 can only assign MEMBER or R4.");
       }
     }
 
@@ -92,16 +67,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({
+    return {
       success: true,
       user,
-    });
-  } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 }
-    );
-  }
+    };
+  });
 }

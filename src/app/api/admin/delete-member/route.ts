@@ -1,79 +1,53 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/session";
+import {
+  adminRoute,
+  badRequest,
+  forbidden,
+  notFound,
+} from "@/lib/api";
 
 export async function POST(req: NextRequest) {
-  try {
-      const currentUser = await getCurrentUser();
+  return adminRoute(async (currentUser) => {
+    if (!["OWNER", "R5"].includes(currentUser.role)) {
+      forbidden("You don't have permission.");
+    }
 
-          if (!currentUser) {
-                return NextResponse.json(
-                        { error: "Unauthorized." },
-                                { status: 401 }
-                                      );
-                                          }
+    const { id } = await req.json();
 
-                                              if (!["OWNER", "R5"].includes(currentUser.role)) {
-                                                    return NextResponse.json(
-                                                            { error: "You don't have permission." },
-                                                                    { status: 403 }
-                                                                          );
-                                                                              }
+    if (!id) {
+      badRequest("User ID is required.");
+    }
 
-                                                                                  const { id } = await req.json();
+    const targetUser = await prisma.user.findUnique({
+      where: { id },
+    });
 
-                                                                                      if (!id) {
-                                                                                            return NextResponse.json(
-                                                                                                    { error: "User ID is required." },
-                                                                                                            { status: 400 }
-                                                                                                                  );
-                                                                                                                      }
+    if (!targetUser) {
+      notFound("User not found.");
+    }
 
-                                                                                                                          const targetUser = await prisma.user.findUnique({
-                                                                                                                                where: { id },
-                                                                                                                                    });
+    // لا يمكن حذف نفسك
+    if (targetUser.id === currentUser.id) {
+      forbidden("You can't delete your own account.");
+    }
 
-                                                                                                                                        if (!targetUser) {
-                                                                                                                                              return NextResponse.json(
-                                                                                                                                                      { error: "User not found." },
-                                                                                                                                                              { status: 404 }
-                                                                                                                                                                    );
-                                                                                                                                                                        }
+    // R5 لا يمكنه حذف OWNER أو R5
+    if (
+      currentUser.role === "R5" &&
+      (targetUser.role === "OWNER" || targetUser.role === "R5")
+    ) {
+      forbidden("You can't delete this user.");
+    }
 
-                                                                                                                                                                            // لا يمكن حذف نفسك
-                                                                                                                                                                                if (targetUser.id === currentUser.id) {
-                                                                                                                                                                                      return NextResponse.json(
-                                                                                                                                                                                              { error: "You can't delete your own account." },
-                                                                                                                                                                                                      { status: 403 }
-                                                                                                                                                                                                            );
-                                                                                                                                                                                                                }
+    await prisma.user.delete({
+      where: {
+        id,
+      },
+    });
 
-                                                                                                                                                                                                                    // R5 لا يمكنه حذف OWNER أو R5
-                                                                                                                                                                                                                        if (
-                                                                                                                                                                                                                              currentUser.role === "R5" &&
-                                                                                                                                                                                                                                    (targetUser.role === "OWNER" || targetUser.role === "R5")
-                                                                                                                                                                                                                                        ) {
-                                                                                                                                                                                                                                              return NextResponse.json(
-                                                                                                                                                                                                                                                      { error: "You can't delete this user." },
-                                                                                                                                                                                                                                                              { status: 403 }
-                                                                                                                                                                                                                                                                    );
-                                                                                                                                                                                                                                                                        }
-
-                                                                                                                                                                                                                                                                            await prisma.user.delete({
-                                                                                                                                                                                                                                                                                  where: {
-                                                                                                                                                                                                                                                                                          id,
-                                                                                                                                                                                                                                                                                                },
-                                                                                                                                                                                                                                                                                                    });
-
-                                                                                                                                                                                                                                                                                                        return NextResponse.json({
-                                                                                                                                                                                                                                                                                                              success: true,
-                                                                                                                                                                                                                                                                                                                  });
-                                                                                                                                                                                                                                                                                                                    } catch (error) {
-                                                                                                                                                                                                                                                                                                                        console.error(error);
-
-                                                                                                                                                                                                                                                                                                                            return NextResponse.json(
-                                                                                                                                                                                                                                                                                                                                  { error: "Internal server error." },
-                                                                                                                                                                                                                                                                                                                                        { status: 500 }
-                                                                                                                                                                                                                                                                                                                                            );
-                                                                                                                                                                                                                                                                                                                                              }
-                                                                                                                                                                                                                                                                                                                                              }
+    return {
+      success: true,
+    };
+  });
+}
