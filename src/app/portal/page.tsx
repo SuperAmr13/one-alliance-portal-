@@ -1,136 +1,60 @@
-"use client";
+import { getCurrentUser } from "@/lib/session";
+import { redirect } from "next/navigation";
 
-import { useState } from "react";
+export default async function PortalPage() {
+  const user = await getCurrentUser();
 
-import HeroPowerField from "@/app/portal/report/components/HeroPowerField";
-import FirstSquadPowerField from "@/app/portal/report/components/FirstSquadPowerField";
-import SquadTypeField from "@/app/portal/report/components/SquadTypeField";
-import HeroImageUpload from "@/app/portal/report/components/HeroImageUpload";
-import WallImageUpload from "@/app/portal/report/components/WallImageUpload";
-import SuccessAlert from "@/app/portal/report/components/SuccessAlert";
-import ErrorAlert from "@/app/portal/report/components/ErrorAlert";
-import SubmitButton from "@/app/portal/report/components/SubmitButton";
+    if (!user) {
+        redirect("/login");
+          }
 
-import { useReportSubmit } from "@/app/portal/report/hooks/useReportSubmit";
+            return (
+                <main className="min-h-screen bg-[#050816] text-white p-8">
+                      <h1 className="text-4xl font-bold text-blue-400">
+                              Welcome, {user.inGameName}
+                                    </h1>
 
-export default function ReportPage() {
-  const [heroPower, setHeroPower] = useState("");
-  const [firstSquadPower, setFirstSquadPower] = useState("");
-  const [firstSquadType, setFirstSquadType] = useState("");
+                                          <p className="mt-2 text-gray-400">
+                                                  Player ID: {user.playerId}
+                                                        </p>
 
-  const [heroImage, setHeroImage] =
-    useState<File | null>(null);
+                                                              <p className="mt-1 text-gray-400">
+                                                                      Role: {user.role}
+                                                                            </p>
 
-  const [wallImage, setWallImage] =
-    useState<File | null>(null);
+                                                                                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-10">
 
-  const [heroPreview, setHeroPreview] =
-    useState("");
+                                                                                          <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-6">
+                                                                                                    <h2 className="text-xl font-bold mb-2">
+                                                                                                                My Profile
+                                                                                                                          </h2>
 
-  const [wallPreview, setWallPreview] =
-    useState("");
+                                                                                                                                    <p className="text-gray-400">
+                                                                                                                                                View your account information.
+                                                                                                                                                          </p>
+                                                                                                                                                                  </div>
 
-  const {
-    loading,
-    errors,
-    successMessage,
-    submitReport,
-    setErrors,
-  } = useReportSubmit();
+                                                                                                                                                                          <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-6">
+                                                                                                                                                                                    <h2 className="text-xl font-bold mb-2">
+                                                                                                                                                                                                Weekly Reports
+                                                                                                                                                                                                          </h2>
 
-  async function handleSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
-    e.preventDefault();
+                                                                                                                                                                                                                    <p className="text-gray-400">
+                                                                                                                                                                                                                                Submit your weekly reports.
+                                                                                                                                                                                                                                          </p>
+                                                                                                                                                                                                                                                  </div>
 
-    const success = await submitReport({
-      heroPower,
-      firstSquadPower,
-      firstSquadType,
-      heroImage,
-      wallImage,
-    });
+                                                                                                                                                                                                                                                          <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-6">
+                                                                                                                                                                                                                                                                    <h2 className="text-xl font-bold mb-2">
+                                                                                                                                                                                                                                                                                Statistics
+                                                                                                                                                                                                                                                                                          </h2>
 
-    if (!success) return;
+                                                                                                                                                                                                                                                                                                    <p className="text-gray-400">
+                                                                                                                                                                                                                                                                                                                View your alliance statistics.
+                                                                                                                                                                                                                                                                                                                          </p>
+                                                                                                                                                                                                                                                                                                                                  </div>
 
-    setHeroPower("");
-    setFirstSquadPower("");
-    setFirstSquadType("");
-
-    setHeroImage(null);
-    setWallImage(null);
-
-    setHeroPreview("");
-    setWallPreview("");
-
-    setErrors({});
-  }
-
-  return (
-    <main className="min-h-screen bg-[#050816] px-6 py-10 text-white">
-      <div className="mx-auto max-w-3xl">
-
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-blue-400">
-            Weekly Report
-          </h1>
-
-          <p className="mt-2 text-gray-400">
-            Submit your weekly alliance report.
-          </p>
-        </div>
-
-        <SuccessAlert
-          message={successMessage}
-        />
-
-        <ErrorAlert
-          message={errors.submit}
-        />
-
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-6 rounded-2xl border border-blue-800 bg-[#0b1024] p-8 shadow-2xl"
-        >
-          <HeroPowerField
-            value={heroPower}
-            onChange={setHeroPower}
-            error={errors.heroPower}
-          />
-
-          <FirstSquadPowerField
-            value={firstSquadPower}
-            onChange={setFirstSquadPower}
-            error={errors.firstSquadPower}
-          />
-
-          <SquadTypeField
-            value={firstSquadType}
-            onChange={setFirstSquadType}
-            errors={errors}
-          />
-
-          <HeroImageUpload
-            heroImage={heroImage}
-            setHeroImage={setHeroImage}
-            heroPreview={heroPreview}
-            setHeroPreview={setHeroPreview}
-            errors={errors}
-          />
-
-          <WallImageUpload
-            wallImage={wallImage}
-            setWallImage={setWallImage}
-            wallPreview={wallPreview}
-            setWallPreview={setWallPreview}
-            errors={errors}
-          />
-
-          <SubmitButton
-            loading={loading}
-          />
-        </form>
-      </div>
-    </main>
-  );
-}
+                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                            </main>
+                                                                                                                                                                                                                                                                                                                                              );
+                                                                                                                                                                                                                                                                                                                                              }
