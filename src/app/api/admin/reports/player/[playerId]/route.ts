@@ -15,7 +15,12 @@ export async function GET(
       include: {
         reports: {
           orderBy: {
-            weekNumber: "asc",
+            cycle: {
+              weekNumber: "asc",
+            },
+          },
+          include: {
+            cycle: true,
           },
         },
       },
@@ -36,7 +41,8 @@ export async function GET(
 
       reports: player.reports.map((report) => ({
         id: report.id,
-        weekNumber: report.weekNumber,
+        cycleId: report.cycleId,
+        weekNumber: report.cycle.weekNumber,
         heroPower: report.heroPower.toString(),
         firstSquadPower: report.firstSquadPower.toString(),
         firstSquadType: report.firstSquadType,

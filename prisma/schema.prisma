@@ -43,7 +43,8 @@ model Report {
   userId           String
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  weekNumber       Int
+  cycleId          String
+  cycle            AllianceCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
 
   heroPower        BigInt
   firstSquadPower  BigInt
@@ -55,7 +56,25 @@ model Report {
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
 
-  @@unique([userId, weekNumber])
+  @@unique([userId, cycleId])
+}
+
+model AllianceCycle {
+  id         String   @id @default(cuid())
+
+  name       String
+  weekNumber Int      @unique
+
+  isCurrent  Boolean  @default(false)
+  isOpen     Boolean  @default(true)
+
+  startDate  DateTime
+  endDate    DateTime
+
+  reports    Report[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model News {

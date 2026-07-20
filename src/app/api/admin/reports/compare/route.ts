@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import {
   adminRoute,
   badRequest,
+  notFound,
 } from "@/lib/api";
 
 export async function GET(req: NextRequest) {
@@ -16,6 +17,27 @@ export async function GET(req: NextRequest) {
       badRequest("Both 'from' and 'to' weeks are required.");
     }
 
+    const [fromCycle, toCycle] = await Promise.all([
+      prisma.allianceCycle.findUnique({
+        where: {
+          weekNumber: fromWeek,
+        },
+      }),
+      prisma.allianceCycle.findUnique({
+        where: {
+          weekNumber: toWeek,
+        },
+      }),
+    ]);
+
+    if (!fromCycle) {
+      notFound(`Alliance cycle ${fromWeek} not found.`);
+    }
+
+    if (!toCycle) {
+      notFound(`Alliance cycle ${toWeek} not found.`);
+    }
+
     const users = await prisma.user.findMany({
       where: {
         approved: true,
@@ -26,9 +48,12 @@ export async function GET(req: NextRequest) {
       include: {
         reports: {
           where: {
-            weekNumber: {
-              in: [fromWeek, toWeek],
+            cycleId: {
+              in: [fromCycle.id, toCycle.id],
             },
+          },
+          include: {
+            cycle: true,
           },
         },
       },
@@ -37,11 +62,11 @@ export async function GET(req: NextRequest) {
     const players = users
       .map((user) => {
         const fromReport = user.reports.find(
-          (report) => report.weekNumber === fromWeek
+          (report) => report.cycleId === fromCycle.id
         );
 
         const toReport = user.reports.find(
-          (report) => report.weekNumber === toWeek
+          (report) => report.cycleId === toCycle.id
         );
 
         if (!fromReport || !toReport) {

@@ -2,84 +2,78 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 
+export async function POST(req: NextRequest) {
+  try {
+    const user = await getCurrentUser();
 
-function getWeekNumber(date: Date) {
-  const firstDay = new Date(date.getFullYear(), 0, 1);
-    const pastDays = Math.floor(
-        (date.getTime() - firstDay.getTime()) / 86400000
-          );
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 }
+      );
+    }
 
-            return Math.ceil((pastDays + firstDay.getDay() + 1) / 7);
-            }
+    const currentCycle = await prisma.allianceCycle.findFirst({
+      where: {
+        isCurrent: true,
+      },
+    });
 
-            export async function POST(req: NextRequest) {
-              try {
-                  const user = await getCurrentUser();
+    if (!currentCycle) {
+      return NextResponse.json(
+        { error: "No active alliance cycle found." },
+        { status: 404 }
+      );
+    }
 
-                      if (!user) {
-                            return NextResponse.json(
-                                    { error: "Unauthorized." },
-                                            { status: 401 }
-                                                  );
-                                                      }
+    if (!currentCycle.isOpen) {
+      return NextResponse.json(
+        { error: "Report submission is currently closed." },
+        { status: 400 }
+      );
+    }
 
-                                                          const today = new Date();
-                                                              const day = today.getDay();
+    const body = await req.json();
 
-                                                                  // الخميس - الجمعة - السبت
-                                                                      if (![4, 5, 6].includes(day)) {
-                                                                            return NextResponse.json(
-                                                                                    {
-                                                                                              error:
-                                                                                                          "Reports can only be submitted on Thursday, Friday and Saturday.",
-                                                                                                                  },
-                                                                                                                          { status: 400 }
-                                                                                                                                );
-                                                                                                                                    }
+    const exists = await prisma.report.findUnique({
+      where: {
+        userId_cycleId: {
+          userId: user.id,
+          cycleId: currentCycle.id,
+        },
+      },
+    });
 
-                                                                                                                                        const body = await req.json();
+    if (exists) {
+      return NextResponse.json(
+        {
+          error: "You have already submitted a report for the current cycle.",
+        },
+        { status: 400 }
+      );
+    }
 
-                                                                                                                                            const weekNumber = getWeekNumber(today);
+    const report = await prisma.report.create({
+      data: {
+        userId: user.id,
+        cycleId: currentCycle.id,
+        heroPower: BigInt(body.heroPower),
+        firstSquadPower: BigInt(body.firstSquadPower),
+        firstSquadType: body.firstSquadType,
+        heroPowerImage: body.heroImagePath,
+        wallImage: body.wallImagePath,
+      },
+    });
 
-                                                                                                                                                const exists = await prisma.report.findUnique({
-                                                                                                                                                      where: {
-                                                                                                                                                              userId_weekNumber: {
-                                                                                                                                                                        userId: user.id,
-                                                                                                                                                                                  weekNumber,
-                                                                                                                                                                                          },
-                                                                                                                                                                                                },
-                                                                                                                                                                                                    });
+    return NextResponse.json(report);
+  } catch (error) {
+    console.error(error);
 
-                                                                                                                                                                                                        if (exists) {
-                                                                                                                                                                                                              return NextResponse.json(
-                                                                                                                                                                                                                      {
-                                                                                                                                                                                                                                error: "You have already submitted this week's report.",
-                                                                                                                                                                                                                                        },
-                                                                                                                                                                                                                                                { status: 400 }
-                                                                                                                                                                                                                                                      );
-                                                                                                                                                                                                                                                          }
-
-                                                                                                                                                                                                                                                              const report = await prisma.report.create({
-                                                                                                                                                                                                                                                                    data: {
-                                                                                                                                                                                                                                                                            userId: user.id,
-                                                                                                                                                                                                                                                                                    weekNumber,
-                                                                                                                                                                                                                                                                                            heroPower: BigInt(body.heroPower),
-                                                                                                                                                                                                                                                                                                    firstSquadPower: BigInt(body.firstSquadPower),
-                                                                                                                                                                                                                                                                                                            firstSquadType: body.firstSquadType,
-                                                                                                                                                                                                                                                                                                                    heroPowerImage: body.heroImagePath,
-                                                                                                                                                                                                                                                                                                                            wallImage: body.wallImagePath,
-                                                                                                                                                                                                                                                                                                                                  },
-                                                                                                                                                                                                                                                                                                                                      });
-
-                                                                                                                                                                                                                                                                                                                                          return NextResponse.json(report);
-                                                                                                                                                                                                                                                                                                                                            } catch (error) {
-                                                                                                                                                                                                                                                                                                                                                console.error(error);
-
-                                                                                                                                                                                                                                                                                                                                                    return NextResponse.json(
-                                                                                                                                                                                                                                                                                                                                                          {
-                                                                                                                                                                                                                                                                                                                                                                  error: "Internal server error.",
-                                                                                                                                                                                                                                                                                                                                                                        },
-                                                                                                                                                                                                                                                                                                                                                                              { status: 500 }
-                                                                                                                                                                                                                                                                                                                                                                                  );
-                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                    }
+    return NextResponse.json(
+      {
+        error: "Internal server error.",
+      },
+      { status: 500 }
+    );
+  }
+}
