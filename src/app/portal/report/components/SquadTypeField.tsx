@@ -22,7 +22,11 @@ export default function SquadTypeField({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-700 bg-[#0B1220] p-3 outline-none focus:border-blue-500"
+        className={`w-full rounded-lg border bg-[#0B1220] p-3 outline-none transition ${
+          errors.firstSquadType
+            ? "border-red-500 focus:border-red-500"
+            : "border-gray-700 focus:border-blue-500"
+        }`}
       >
         <option value="">Select Squad Type</option>
         <option value="AIRCRAFT">Aircraft</option>
@@ -31,7 +35,7 @@ export default function SquadTypeField({
       </select>
 
       {errors.firstSquadType && (
-        <p className="mt-1 text-sm text-red-500">
+        <p className="mt-2 text-sm text-red-400">
           {errors.firstSquadType}
         </p>
       )}

@@ -94,21 +94,48 @@ export default function ReportPage() {
         >
           <HeroPowerField
             value={heroPower}
-            onChange={setHeroPower}
-            error={errors.heroPower}
-          />
+              onChange={(value) => {
+                  setHeroPower(value);
+
+                      if (errors.heroPower) {
+                            setErrors((prev) => ({
+                                    ...prev,
+                                            heroPower: "",
+                                                  }));
+                                                      }
+                                                        }}
+                                                          error={errors.heroPower}
+                                                          />
 
           <FirstSquadPowerField
             value={firstSquadPower}
-            onChange={setFirstSquadPower}
-            error={errors.firstSquadPower}
-          />
+              onChange={(value) => {
+                  setFirstSquadPower(value);
+
+                      if (errors.firstSquadPower) {
+                            setErrors((prev) => ({
+                                    ...prev,
+                                            firstSquadPower: "",
+                                                  }));
+                                                      }
+                                                        }}
+                                                          error={errors.firstSquadPower}
+                                                          />
 
           <SquadTypeField
             value={firstSquadType}
-            onChange={setFirstSquadType}
-            errors={errors}
-          />
+              onChange={(value) => {
+                  setFirstSquadType(value);
+
+                      if (errors.firstSquadType) {
+                            setErrors((prev) => ({
+                                    ...prev,
+                                            firstSquadType: "",
+                                                  }));
+                                                      }
+                                                        }}
+                                                          errors={errors}
+                                                          />
 
           <HeroImageUpload
             heroImage={heroImage}

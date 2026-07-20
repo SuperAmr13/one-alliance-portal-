@@ -27,7 +27,13 @@ export default function HeroImageUpload({
         Hero Power Screenshot
       </label>
 
-      <label className="flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-blue-700 bg-[#111933] p-6 transition hover:border-blue-500 hover:bg-[#18234a]">
+      <label
+        className={`flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed bg-[#111933] p-6 transition ${
+          errors.heroImage
+            ? "border-red-500 hover:border-red-400"
+            : "border-blue-700 hover:border-blue-500 hover:bg-[#18234a]"
+        }`}
+      >
         <input
           type="file"
           accept="image/*"

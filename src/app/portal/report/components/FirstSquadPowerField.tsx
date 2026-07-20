@@ -20,11 +20,18 @@ export default function FirstSquadPowerField({
       </label>
 
       <input
-        type="number"
-        min={10000000}
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-blue-800 bg-[#111933] p-3 text-white outline-none transition focus:border-blue-500"
+        onChange={(e) =>
+          onChange(e.target.value.replace(/\D/g, ""))
+        }
+        className={`w-full rounded-xl border bg-[#111933] p-3 text-white outline-none transition ${
+          error
+            ? "border-red-500 focus:border-red-500"
+            : "border-blue-800 focus:border-blue-500"
+        }`}
       />
 
       {error && (
