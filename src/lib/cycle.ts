@@ -72,20 +72,47 @@ export async function createNextCycle() {
 
   const weekNumber = await getNextWeekNumber();
 
-  const now = new Date();
+  const start = new Date();
 
-  const end = new Date(now);
-  end.setDate(end.getDate() + 3);
+  // الخميس القادم
+  do {
+    start.setDate(start.getDate() + 1);
+  } while (start.getDay() !== 4);
+
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setDate(end.getDate() + 2); // السبت
+  end.setHours(23, 59, 59, 999);
+
+  const existingCycle = await prisma.allianceCycle.findFirst({
+    where: {
+      startDate: start,
+    },
+  });
+
+  if (existingCycle) {
+    await prisma.allianceCycle.update({
+      where: {
+        id: existingCycle.id,
+      },
+      data: {
+        isCurrent: true,
+      },
+    });
+
+    return existingCycle;
+  }
 
   return prisma.allianceCycle.create({
     data: {
       name: `Week ${weekNumber}`,
       weekNumber,
       isCurrent: true,
-      isOpen: true,
-      autoMode: true,
+      isOpen: false,
+      autoMode: current?.autoMode ?? true,
       manualOverride: false,
-      startDate: now,
+      startDate: start,
       endDate: end,
     },
   });
@@ -142,4 +169,50 @@ export async function toggleAutoMode() {
       autoMode: !cycle.autoMode,
     },
   });
+}
+
+export async function processAutoCycle() {
+  const cycle = await getCurrentCycle();
+
+  if (!cycle) {
+    return null;
+  }
+
+  if (!cycle.autoMode || cycle.manualOverride) {
+    return cycle;
+  }
+
+  const now = new Date();
+
+  // افتح الدورة عند بداية موعدها
+  if (!cycle.isOpen && now >= cycle.startDate && now <= cycle.endDate) {
+    return prisma.allianceCycle.update({
+      where: {
+        id: cycle.id,
+      },
+      data: {
+        isOpen: true,
+      },
+    });
+  }
+
+  // بعد انتهاء السبت أغلق الدورة وأنشئ التالية
+  if (now > cycle.endDate) {
+    await prisma.allianceCycle.update({
+      where: {
+        id: cycle.id,
+      },
+      data: {
+        isOpen: false,
+      },
+    });
+
+    if (cycle.isCurrent) {
+      return createNextCycle();
+    }
+
+    return cycle;
+  }
+
+  return cycle;
 }

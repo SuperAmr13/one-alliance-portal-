@@ -80,6 +80,21 @@ model AllianceCycle {
                           updatedAt DateTime @updatedAt
 }
 
+model AllianceSettings {
+    id Int @id @default(1)
+
+      cycleStartDay Int @default(4)
+        cycleEndDay   Int @default(6)
+
+          cycleStartHour Int @default(0)
+            cycleEndHour   Int @default(23)
+
+              autoMode Boolean @default(true)
+
+                createdAt DateTime @default(now())
+                  updatedAt DateTime @updatedAt
+}
+
 model News {
     id String @id @default(cuid())
 
