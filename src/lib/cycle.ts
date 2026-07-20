@@ -21,6 +21,40 @@ export async function getNextWeekNumber() {
   return lastCycle ? lastCycle.weekNumber + 1 : 1;
 }
 
+export async function initializeFirstCycle() {
+  const existing = await prisma.allianceCycle.count();
+
+  if (existing > 0) {
+    return null;
+  }
+
+  const start = new Date();
+
+  // الخميس القادم
+  while (start.getDay() !== 4) {
+    start.setDate(start.getDate() + 1);
+  }
+
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setDate(end.getDate() + 2); // السبت
+  end.setHours(23, 59, 59, 999);
+
+  return prisma.allianceCycle.create({
+    data: {
+      name: "Week 1",
+      weekNumber: 1,
+      isCurrent: true,
+      isOpen: false,
+      autoMode: true,
+      manualOverride: false,
+      startDate: start,
+      endDate: end,
+    },
+  });
+}
+
 export async function createNextCycle() {
   const current = await getCurrentCycle();
 

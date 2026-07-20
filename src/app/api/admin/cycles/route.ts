@@ -3,6 +3,7 @@ import { adminRoute, badRequest } from "@/lib/api";
 import {
   getCurrentCycle,
   createNextCycle,
+  initializeFirstCycle,
   openCurrentCycle,
   closeCurrentCycle,
   toggleAutoMode,
@@ -21,6 +22,9 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     switch (body.action) {
+      case "initialize":
+        return await initializeFirstCycle();
+
       case "open":
         return await openCurrentCycle();
 
