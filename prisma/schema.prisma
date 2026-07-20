@@ -21,81 +21,86 @@ enum SquadType {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  playerId     String   @unique
+  id           String @id @default(cuid())
+  playerId     String @unique
   inGameName   String
   passwordHash String
 
-  role         Role     @default(MEMBER)
-  approved     Boolean  @default(false)
+  role     Role    @default(MEMBER)
+  approved Boolean @default(false)
 
-  news         News[]
-  sessions     Session[]
-  reports      Report[]
+  news     News[]
+  sessions Session[]
+  reports  Report[]
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Report {
-  id               String      @id @default(cuid())
+  id String @id @default(cuid())
 
-  userId           String
-  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  cycleId          String
-  cycle            AllianceCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  cycleId String
+  cycle   AllianceCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
 
-  heroPower        BigInt
-  firstSquadPower  BigInt
-  firstSquadType   SquadType
+  heroPower       BigInt
+  firstSquadPower BigInt
+  firstSquadType  SquadType
 
-  heroPowerImage   String
-  wallImage        String
+  heroPowerImage String
+  wallImage      String
 
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, cycleId])
 }
 
 model AllianceCycle {
-  id         String   @id @default(cuid())
+  id String @id @default(cuid())
 
   name       String
-  weekNumber Int      @unique
+  weekNumber Int    @unique
 
-  isCurrent  Boolean  @default(false)
-  isOpen     Boolean  @default(true)
+  isCurrent Boolean @default(false)
+  isOpen    Boolean @default(true)
 
-  startDate  DateTime
-  endDate    DateTime
+  autoMode       Boolean @default(true)
+  manualOverride Boolean @default(false)
 
-  reports    Report[]
+  startDate DateTime
+  endDate   DateTime
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  reports Report[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model News {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  pinned    Boolean  @default(false)
+  id String @id @default(cuid())
 
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
+  title   String
+  content String
+  pinned  Boolean @default(false)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  token     String   @unique
+  id String @id @default(cuid())
 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token String @unique
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
 
