@@ -23,11 +23,14 @@ export default function CyclesPage() {
   }, []);
 
   async function loadCycle() {
-    try {
-      const res = await fetch("/api/admin/cycles");
-      const data = await res.json();
+      try {
+          const res = await fetch("/api/admin/cycles");
+              const data = await res.json();
 
-      setCycle(data.cycle);
+                  console.log(data);
+
+                      setCycle(data);
+  
     } catch (error) {
       console.error(error);
     } finally {
@@ -143,7 +146,7 @@ export default function CyclesPage() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            
+
           <button
             onClick={() => runAction("open")}
               className="rounded-xl bg-green-600 p-4 font-bold transition hover:bg-green-700"
