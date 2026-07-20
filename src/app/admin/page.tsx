@@ -41,6 +41,9 @@ export default function AdminPage() {
               href="/admin/members"
               className="block w-full rounded-lg bg-blue-600 hover:bg-blue-700 py-3 text-center font-semibold transition"
             >
+              Open
+            </Link>
+          </div>
               <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-6 hover:border-blue-500 transition">
                   <h2 className="text-xl font-bold mb-2">
                       Reports
@@ -57,9 +60,6 @@ export default function AdminPage() {
                                                 Open
                                                   </Link>
                                                   </div>
-              Open
-            </Link>
-          </div>
 
         </div>
       </main>
