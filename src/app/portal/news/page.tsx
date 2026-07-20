@@ -1,9 +1,9 @@
-export default function ProfilePage() {
+export default function NewsPage() {
       return (
           <main className="min-h-screen bg-[#050816] flex items-center justify-center text-white px-6">
                 <div className="text-center">
                         <h1 className="text-4xl font-bold text-blue-400 mb-4">
-                                  My Profile
+                                  Alliance News
                                           </h1>
 
                                                   <p className="text-gray-400 text-lg">
