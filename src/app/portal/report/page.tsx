@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import ReportClosedOverlay from "@/app/portal/report/components/ReportClosedOverlay";
 import HeroPowerField from "@/app/portal/report/components/HeroPowerField";
 import FirstSquadPowerField from "@/app/portal/report/components/FirstSquadPowerField";
 import SquadTypeField from "@/app/portal/report/components/SquadTypeField";
@@ -18,17 +19,32 @@ export default function ReportPage() {
   const [firstSquadPower, setFirstSquadPower] = useState("");
   const [firstSquadType, setFirstSquadType] = useState("");
 
-  const [heroImage, setHeroImage] =
-    useState<File | null>(null);
+  const [heroImage, setHeroImage] = useState<File | null>(null);
+  const [wallImage, setWallImage] = useState<File | null>(null);
 
-  const [wallImage, setWallImage] =
-    useState<File | null>(null);
+  const [heroPreview, setHeroPreview] = useState("");
+  const [wallPreview, setWallPreview] = useState("");
 
-  const [heroPreview, setHeroPreview] =
-    useState("");
+  const [cycleOpen, setCycleOpen] = useState(true);
+  const [nextOpenDate, setNextOpenDate] = useState("");
 
-  const [wallPreview, setWallPreview] =
-    useState("");
+  useEffect(() => {
+    async function loadCycle() {
+      try {
+        const res = await fetch("/api/current-cycle");
+        const data = await res.json();
+
+        if (data.cycle) {
+          setCycleOpen(data.cycle.isOpen);
+          setNextOpenDate(data.cycle.startDate);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadCycle();
+  }, []);
 
   const {
     loading,
@@ -68,6 +84,13 @@ export default function ReportPage() {
 
   return (
     <main className="min-h-screen bg-[#050816] px-6 py-10 text-white">
+
+      {!cycleOpen && (
+        <ReportClosedOverlay
+          nextOpenDate={nextOpenDate}
+        />
+      )}
+
       <div className="mx-auto max-w-3xl">
 
         <div className="mb-8">
@@ -80,13 +103,9 @@ export default function ReportPage() {
           </p>
         </div>
 
-        <SuccessAlert
-          message={successMessage}
-        />
+        <SuccessAlert message={successMessage} />
 
-        <ErrorAlert
-          message={errors.submit}
-        />
+        <ErrorAlert message={errors.submit} />
 
         <form
           onSubmit={handleSubmit}
@@ -94,48 +113,48 @@ export default function ReportPage() {
         >
           <HeroPowerField
             value={heroPower}
-              onChange={(value) => {
-                  setHeroPower(value);
+            onChange={(value) => {
+              setHeroPower(value);
 
-                      if (errors.heroPower) {
-                            setErrors((prev) => ({
-                                    ...prev,
-                                            heroPower: "",
-                                                  }));
-                                                      }
-                                                        }}
-                                                          error={errors.heroPower}
-                                                          />
+              if (errors.heroPower) {
+                setErrors((prev) => ({
+                  ...prev,
+                  heroPower: "",
+                }));
+              }
+            }}
+            error={errors.heroPower}
+          />
 
           <FirstSquadPowerField
             value={firstSquadPower}
-              onChange={(value) => {
-                  setFirstSquadPower(value);
+            onChange={(value) => {
+              setFirstSquadPower(value);
 
-                      if (errors.firstSquadPower) {
-                            setErrors((prev) => ({
-                                    ...prev,
-                                            firstSquadPower: "",
-                                                  }));
-                                                      }
-                                                        }}
-                                                          error={errors.firstSquadPower}
-                                                          />
+              if (errors.firstSquadPower) {
+                setErrors((prev) => ({
+                  ...prev,
+                  firstSquadPower: "",
+                }));
+              }
+            }}
+            error={errors.firstSquadPower}
+          />
 
           <SquadTypeField
             value={firstSquadType}
-              onChange={(value) => {
-                  setFirstSquadType(value);
+            onChange={(value) => {
+              setFirstSquadType(value);
 
-                      if (errors.firstSquadType) {
-                            setErrors((prev) => ({
-                                    ...prev,
-                                            firstSquadType: "",
-                                                  }));
-                                                      }
-                                                        }}
-                                                          errors={errors}
-                                                          />
+              if (errors.firstSquadType) {
+                setErrors((prev) => ({
+                  ...prev,
+                  firstSquadType: "",
+                }));
+              }
+            }}
+            errors={errors}
+          />
 
           <HeroImageUpload
             heroImage={heroImage}
@@ -153,10 +172,9 @@ export default function ReportPage() {
             errors={errors}
           />
 
-          <SubmitButton
-            loading={loading}
-          />
+          <SubmitButton loading={loading} />
         </form>
+
       </div>
     </main>
   );
