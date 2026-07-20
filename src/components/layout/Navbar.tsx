@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Button from "@/components/ui/Button";
 
 type User = {
   id: string;
@@ -44,49 +43,21 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-black/30 backdrop-blur-md border-b border-blue-500/20">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-blue-400 tracking-wider">
-          ONe
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+
+        <h1 className="text-lg sm:text-xl font-bold text-blue-400 truncate">
+          {user ? user.inGameName : "ONe"}
         </h1>
 
-        <div className="flex items-center gap-3">
-          {user ? (
-            <>
-              <span className="text-white font-semibold">
-                {user.inGameName}
-              </span>
+        {user ? (
+          <button
+            onClick={logout}
+            className="rounded-lg bg-red-600 hover:bg-red-700 px-4 py-2 text-white text-sm font-semibold transition"
+          >
+            Log Out
+          </button>
+        ) : null}
 
-              <Button href="/portal">
-                Portal
-              </Button>
-
-              {(user.role === "OWNER" ||
-                user.role === "R5" ||
-                user.role === "R4") && (
-                <Button href="/admin">
-                  Admin
-                </Button>
-              )}
-
-              <button
-                onClick={logout}
-                className="rounded-lg bg-red-600 hover:bg-red-700 px-4 py-2 text-white transition"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Button href="/login">
-                Enter Portal
-              </Button>
-
-              <Button href="/register" variant="secondary">
-                Request Access
-              </Button>
-            </>
-          )}
-        </div>
       </div>
     </nav>
   );
