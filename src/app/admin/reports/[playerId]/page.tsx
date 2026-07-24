@@ -43,6 +43,8 @@ export default function PlayerPage({
 
         const data = await res.json();
 
+        console.log(data);
+
         setPlayer(data.player);
         setReports(data.reports);
       } finally {
