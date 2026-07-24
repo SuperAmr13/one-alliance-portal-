@@ -5,143 +5,143 @@ import { use, useEffect, useState } from "react";
 
 type Data = {
   player: {
-      playerId: string;
-          inGameName: string;
-              role: string;
-                };
+    playerId: string;
+    inGameName: string;
+    role: string;
+  };
 
-                  report: {
-                      id: string;
-                          weekNumber: number;
-                              heroPower: string;
-                                  firstSquadPower: string;
-                                      firstSquadType: string;
-                                          heroPowerImage: string;
-                                              wallImage: string;
-                                                  createdAt: string;
-                                                      updatedAt: string;
-                                                        };
-                                                        };
+  report: {
+    id: string;
+    weekNumber: number;
+    heroPower: string;
+    firstSquadPower: string;
+    firstSquadType: string;
+    heroPowerImage: string;
+    wallImage: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
 
-                                                        export default function WeekPage({
-                                                          params,
-                                                          }: {
-                                                            params: Promise<{
-                                                                playerId: string;
-                                                                    week: string;
-                                                                      }>;
-                                                                      }) {
-                                                                        const { playerId, week } = use(params);
+export default function WeekPage({
+  params,
+}: {
+  params: Promise<{
+    playerId: string;
+    week: string;
+  }>;
+}) {
+  const { playerId, week } = use(params);
 
-                                                                          const [data, setData] = useState<Data | null>(null);
-                                                                            const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<Data | null>(null);
+  const [loading, setLoading] = useState(true);
 
-                                                                              useEffect(() => {
-                                                                                  async function load() {
-                                                                                        try {
-                                                                                                const res = await fetch(
-                                                                                                          `/api/admin/reports/player/${playerId}/week/${week}`
-                                                                                                                  );
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch(
+          `/api/admin/reports/player/${playerId}/week/${week}`
+        );
 
-                                                                                                                          const json = await res.json();
+        const json = await res.json();
 
-                                                                                                                                  setData(json);
-                                                                                                                                        } finally {
-                                                                                                                                                setLoading(false);
-                                                                                                                                                      }
-                                                                                                                                                          }
+        setData(json);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-                                                                                                                                                              load();
-                                                                                                                                                                }, [playerId, week]);
+    load();
+  }, [playerId, week]);
 
-                                                                                                                                                                  if (loading) {
-                                                                                                                                                                      return (
-                                                                                                                                                                            <main className="min-h-screen bg-[#050816] text-white p-8">
-                                                                                                                                                                                    Loading...
-                                                                                                                                                                                          </main>
-                                                                                                                                                                                              );
-                                                                                                                                                                                                }
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#050816] text-white p-8">
+        Loading...
+      </main>
+    );
+  }
 
-                                                                                                                                                                                                  if (!data) {
-                                                                                                                                                                                                      return (
-                                                                                                                                                                                                            <main className="min-h-screen bg-[#050816] text-white p-8">
-                                                                                                                                                                                                                    Report not found.
-                                                                                                                                                                                                                          </main>
-                                                                                                                                                                                                                              );
-                                                                                                                                                                                                                                }
+  if (!data) {
+    return (
+      <main className="min-h-screen bg-[#050816] text-white p-8">
+        Report not found.
+      </main>
+    );
+  }
 
-                                                                                                                                                                                                                                  const { player, report } = data;
+  const { player, report } = data;
 
-                                                                                                                                                                                                                                    return (
-                                                                                                                                                                                                                                        <main className="min-h-screen bg-[#050816] text-white p-8">
+  return (
+    <main className="min-h-screen bg-[#050816] text-white p-8">
 
-                                                                                                                                                                                                                                              <Link
-                                                                                                                                                                                                                                                      href={`/admin/reports/${player.playerId}`}
-                                                                                                                                                                                                                                                              className="text-blue-400 hover:underline"
-                                                                                                                                                                                                                                                                    >
-                                                                                                                                                                                                                                                                            ← Back
-                                                                                                                                                                                                                                                                                  </Link>
+      <Link
+        href={`/admin/reports/${player.playerId}`}
+        className="text-blue-400 hover:underline"
+      >
+        ← Back
+      </Link>
 
-                                                                                                                                                                                                                                                                                        <div className="mt-6 rounded-xl border border-blue-800 bg-[#0b1024] p-6">
+      <div className="mt-6 rounded-xl border border-blue-800 bg-[#0b1024] p-6">
 
-                                                                                                                                                                                                                                                                                                <h1 className="text-3xl font-bold">
-                                                                                                                                                                                                                                                                                                          {player.inGameName}
-                                                                                                                                                                                                                                                                                                                  </h1>
+        <h1 className="text-3xl font-bold">
+          {player.inGameName}
+        </h1>
 
-                                                                                                                                                                                                                                                                                                                          <p className="mt-2 text-gray-400">
-                                                                                                                                                                                                                                                                                                                                    Week {report.weekNumber}
-                                                                                                                                                                                                                                                                                                                                            </p>
+        <p className="mt-2 text-gray-400">
+          Week {report.weekNumber}
+        </p>
 
-                                                                                                                                                                                                                                                                                                                                                    <div className="mt-6 space-y-3">
+        <div className="mt-6 space-y-3">
 
-                                                                                                                                                                                                                                                                                                                                                              <p>
-                                                                                                                                                                                                                                                                                                                                                                          <strong>Hero Power:</strong> {report.heroPower}
-                                                                                                                                                                                                                                                                                                                                                                                    </p>
+          <p>
+            <strong>Hero Power:</strong> {report.heroPower}
+          </p>
 
-                                                                                                                                                                                                                                                                                                                                                                                              <p>
-                                                                                                                                                                                                                                                                                                                                                                                                          <strong>First Squad Power:</strong> {report.firstSquadPower}
-                                                                                                                                                                                                                                                                                                                                                                                                                    </p>
+          <p>
+            <strong>First Squad Power:</strong> {report.firstSquadPower}
+          </p>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                              <p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                          <strong>First Squad Type:</strong> {report.firstSquadType}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    </p>
+          <p>
+            <strong>First Squad Type:</strong> {report.firstSquadType}
+          </p>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+        </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </div>
+      </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div className="grid md:grid-cols-2 gap-6 mt-8">
+      <div className="grid md:grid-cols-2 gap-6 mt-8">
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div className="rounded-xl border border-gray-700 bg-[#0b1024] p-4">
+        <div className="rounded-xl border border-gray-700 bg-[#0b1024] p-4">
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <h2 className="text-xl font-semibold mb-4">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      Hero Power Image
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Hero Power Image
+          </h2>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <img
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      src={report.heroPowerImage}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  alt="Hero Power"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              className="rounded-lg w-full"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        />
+          <img
+            src={report.heroPowerImage}
+            alt="Hero Power"
+            className="rounded-lg w-full"
+          />
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+        </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div className="rounded-xl border border-gray-700 bg-[#0b1024] p-4">
+        <div className="rounded-xl border border-gray-700 bg-[#0b1024] p-4">
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <h2 className="text-xl font-semibold mb-4">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              Wall Image
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Wall Image
+          </h2>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <img
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              src={report.wallImage}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          alt="Wall"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      className="rounded-lg w-full"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                />
+          <img
+            src={report.wallImage}
+            alt="Wall"
+            className="rounded-lg w-full"
+          />
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+        </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </div>
+      </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </main>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    );
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+    </main>
+  );
+}

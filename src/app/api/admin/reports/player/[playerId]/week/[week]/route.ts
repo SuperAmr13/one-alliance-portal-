@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { supabaseServer } from "@/lib/supabase-server";
 import {
   adminRoute,
   notFound,
@@ -55,6 +56,14 @@ export async function GET(
       notFound("Report not found.");
     }
 
+    const { data: heroImage } = await supabaseServer.storage
+      .from("reports")
+      .createSignedUrl(report.heroPowerImage, 60 * 60);
+
+    const { data: wallImage } = await supabaseServer.storage
+      .from("reports")
+      .createSignedUrl(report.wallImage, 60 * 60);
+
     return {
       player: {
         playerId: user.playerId,
@@ -69,8 +78,8 @@ export async function GET(
         heroPower: report.heroPower.toString(),
         firstSquadPower: report.firstSquadPower.toString(),
         firstSquadType: report.firstSquadType,
-        heroPowerImage: report.heroPowerImage,
-        wallImage: report.wallImage,
+        heroPowerImage: heroImage?.signedUrl ?? "",
+        wallImage: wallImage?.signedUrl ?? "",
         createdAt: report.createdAt,
         updatedAt: report.updatedAt,
       },
