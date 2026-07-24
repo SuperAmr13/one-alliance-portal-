@@ -43,22 +43,9 @@ export async function GET() {
         playerId: user.playerId,
         inGameName: user.inGameName,
         role: user.role,
-
         totalReports: user.reports.length,
-
         submittedCurrentWeek: !!currentCycleReport,
-
         lastReportDate: latestReport?.createdAt ?? null,
-
-        heroPower: latestReport
-          ? latestReport.heroPower.toString()
-          : null,
-
-        firstSquadPower: latestReport
-          ? latestReport.firstSquadPower.toString()
-          : null,
-
-        firstSquadType: latestReport?.firstSquadType ?? null,
       };
     });
 
