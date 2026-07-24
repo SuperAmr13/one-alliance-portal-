@@ -25,7 +25,7 @@ export default function PlayerCard({
   };
 
   return (
-    <Link href={`/admin/reports/players/${playerId}`}>
+    <Link href={`/admin/reports/${playerId}`}>
       <div
         className={`rounded-2xl p-5 bg-[#0b1024] border transition-all duration-300 hover:scale-[1.02] hover:shadow-xl cursor-pointer ${
           submittedCurrentWeek
