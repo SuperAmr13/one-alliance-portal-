@@ -40,118 +40,178 @@ export default function ReportsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#050816] text-white p-8">
-        <h1 className="text-4xl font-bold text-blue-400">
+      <main className="min-h-screen bg-[#050816] p-6 text-white">
+        <h1 className="text-3xl font-bold text-blue-400">
           Reports Dashboard
         </h1>
 
-        <p className="text-gray-400 mt-6">Loading...</p>
+        <p className="mt-4 text-gray-400">
+          Loading...
+        </p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#050816] text-white p-8">
+    <main className="min-h-screen bg-[#050816] p-6 text-white">
 
-      <h1 className="text-4xl font-bold text-blue-400 mb-8">
+      <h1 className="text-3xl font-bold text-blue-400">
         Reports Dashboard
       </h1>
 
-      <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-6 mb-8">
+      <p className="mt-2 mb-6 text-gray-400">
+        Manage alliance reports and weekly activity.
+      </p>
 
-        <h2 className="text-2xl font-bold mb-2">
-          Alliance Cycle
-        </h2>
+      <div className="mb-8 rounded-2xl border border-blue-800 bg-[#0b1024] p-5">
 
-        <p className="text-gray-400">
-          {summary?.currentCycle.name}
-        </p>
+        <div className="flex items-center justify-between">
 
-        <p className="text-blue-400 mt-2">
-          Week {summary?.currentCycle.weekNumber}
-        </p>
+          <div>
+            <h2 className="text-xl font-bold">
+              Week {summary?.currentCycle.weekNumber}
+            </h2>
+
+            <p className="text-gray-400">
+              {summary?.currentCycle.name}
+            </p>
+          </div>
+
+          <span
+            className={`rounded-full px-3 py-1 text-sm font-semibold ${
+              summary?.currentCycle.isOpen
+                ? "bg-green-600"
+                : "bg-red-600"
+            }`}
+          >
+            {summary?.currentCycle.isOpen ? "Open" : "Closed"}
+          </span>
+
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-4">
+
+          <div>
+            <p className="text-gray-500 text-sm">
+              Members
+            </p>
+
+            <p className="text-2xl font-bold">
+              👥 {summary?.statistics.totalMembers}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-gray-500 text-sm">
+              Submitted
+            </p>
+
+            <p className="text-2xl font-bold text-green-400">
+              ✅ {summary?.statistics.submitted}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-gray-500 text-sm">
+              Missing
+            </p>
+
+            <p className="text-2xl font-bold text-red-400">
+              ❌ {summary?.statistics.missing}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-gray-500 text-sm">
+              Completion
+            </p>
+
+            <p className="text-2xl font-bold text-yellow-400">
+              📊 {summary?.statistics.completionRate}%
+            </p>
+          </div>
+
+        </div>
 
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-
-        <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-6">
-          <p className="text-gray-400">Members</p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {summary?.statistics.totalMembers}
-          </h2>
-        </div>
-
-        <div className="rounded-xl border border-green-700 bg-[#0b1024] p-6">
-          <p className="text-gray-400">Submitted</p>
-
-          <h2 className="text-3xl font-bold text-green-400 mt-2">
-            {summary?.statistics.submitted}
-          </h2>
-        </div>
-
-        <div className="rounded-xl border border-red-700 bg-[#0b1024] p-6">
-          <p className="text-gray-400">Missing</p>
-
-          <h2 className="text-3xl font-bold text-red-400 mt-2">
-            {summary?.statistics.missing}
-          </h2>
-        </div>
-
-        <div className="rounded-xl border border-yellow-700 bg-[#0b1024] p-6">
-          <p className="text-gray-400">
-            Completion
-          </p>
-
-          <h2 className="text-3xl font-bold text-yellow-400 mt-2">
-            {summary?.statistics.completionRate}%
-          </h2>
-        </div>
-
-      </div>
-
-      <h2 className="text-2xl font-bold text-blue-400 mb-6">
-        Reports Tools
+      <h2 className="mb-5 text-2xl font-bold text-blue-400">
+        Quick Actions
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+
+        <Link
+          href="/admin/reports/players"
+          className="rounded-2xl border border-blue-700 bg-[#0b1024] p-6 transition hover:scale-[1.02] hover:border-blue-500"
+        >
+          <div className="text-4xl">👥</div>
+
+          <h3 className="mt-4 text-xl font-bold">
+            Players Reports
+          </h3>
+
+          <p className="mt-2 text-gray-400">
+            Browse players and open all reports.
+          </p>
+        </Link>
 
         <Link
           href="/admin/reports/missing"
-          className="rounded-xl border border-red-700 bg-[#0b1024] p-6 transition hover:border-red-500 hover:scale-[1.02]"
+          className="rounded-2xl border border-red-700 bg-[#0b1024] p-6 transition hover:scale-[1.02] hover:border-red-500"
         >
-          <h3 className="text-xl font-bold text-red-400">
+          <div className="text-4xl">📄</div>
+
+          <h3 className="mt-4 text-xl font-bold">
             Missing Reports
           </h3>
 
-          <p className="text-gray-400 mt-2">
-            View members who did not submit their weekly report.
+          <p className="mt-2 text-gray-400">
+            View members who missed their report.
           </p>
         </Link>
 
         <Link
           href="/admin/reports/compare"
-          className="rounded-xl border border-blue-700 bg-[#0b1024] p-6 transition hover:border-blue-500 hover:scale-[1.02]"
+          className="rounded-2xl border border-purple-700 bg-[#0b1024] p-6 transition hover:scale-[1.02] hover:border-purple-500"
         >
-          <h3 className="text-xl font-bold text-blue-400">
+          <div className="text-4xl">📊</div>
+
+          <h3 className="mt-4 text-xl font-bold">
             Compare Reports
           </h3>
 
-          <p className="text-gray-400 mt-2">
-            Compare reports between different weeks.
+          <p className="mt-2 text-gray-400">
+            Compare reports between weeks.
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/reports/statistics"
+          className="rounded-2xl border border-yellow-700 bg-[#0b1024] p-6 transition hover:scale-[1.02] hover:border-yellow-500"
+        >
+          <div className="text-4xl">📈</div>
+
+          <h3 className="mt-4 text-xl font-bold">
+            Statistics
+          </h3>
+
+          <p className="mt-2 text-gray-400">
+            View alliance report analytics.
           </p>
         </Link>
 
         <Link
           href="/admin/reports/export"
-          className="rounded-xl border border-green-700 bg-[#0b1024] p-6 transition hover:border-green-500 hover:scale-[1.02]"
+          className="rounded-2xl border border-green-700 bg-[#0b1024] p-6 transition hover:scale-[1.02] hover:border-green-500 md:col-span-2"
         >
-          <h3 className="text-xl font-bold text-green-400">
-            Export Excel
+          <div className="text-4xl">📥</div>
+
+          <h3 className="mt-4 text-xl font-bold">
+            Export Reports
           </h3>
 
-          <p className="text-gray-400 mt-2">
+          <p className="mt-2 text-gray-400">
             Download all reports as an Excel file.
           </p>
         </Link>
