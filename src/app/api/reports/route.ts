@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const report = await prisma.report.create({
+    await prisma.report.create({
       data: {
         userId: user.id,
         cycleId: currentCycle.id,
@@ -65,7 +65,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(report);
+    return NextResponse.json({
+      success: true,
+      message: "Report submitted successfully.",
+    });
   } catch (error) {
     console.error(error);
 
