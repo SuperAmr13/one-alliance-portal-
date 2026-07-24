@@ -16,7 +16,7 @@ export default function HeroPowerField({
   return (
     <div>
       <label className="mb-2 block font-medium text-gray-200">
-        Hero Power
+        Total Hero Power
       </label>
 
       <input
