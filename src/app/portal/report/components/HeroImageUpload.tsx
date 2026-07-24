@@ -24,7 +24,7 @@ export default function HeroImageUpload({
   return (
     <div>
       <label className="mb-2 block font-medium text-gray-200">
-        Hero Power Screenshot
+        Total Hero Power Screenshot
       </label>
 
       <label
