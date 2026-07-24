@@ -4,120 +4,120 @@ import { useEffect, useState } from "react";
 
 type Player = {
   id: string;
-    playerId: string;
-      inGameName: string;
-        role: string;
-          lastReportWeek: number | null;
-            lastReportDate: string | null;
-            };
+  playerId: string;
+  inGameName: string;
+  role: string;
+  lastReportWeek: number | null;
+  lastReportDate: string | null;
+};
 
-            type Response = {
-              currentWeek: number;
-                totalMissing: number;
-                  players: Player[];
-                  };
+type Response = {
+  currentWeek: number;
+  totalMissing: number;
+  players: Player[];
+};
 
-                  export default function MissingReportsPage() {
-                    const [data, setData] = useState<Response | null>(null);
-                      const [loading, setLoading] = useState(true);
+export default function MissingReportsPage() {
+  const [data, setData] = useState<Response | null>(null);
+  const [loading, setLoading] = useState(true);
 
-                        useEffect(() => {
-                            loadData();
-                              }, []);
+  useEffect(() => {
+    loadData();
+  }, []);
 
-                                async function loadData() {
-                                    try {
-                                          const res = await fetch("/api/admin/reports/missing");
-                                                const json = await res.json();
-                                                      setData(json);
-                                                          } catch (err) {
-                                                                console.error(err);
-                                                                    } finally {
-                                                                          setLoading(false);
-                                                                              }
-                                                                                }
+  async function loadData() {
+    try {
+      const res = await fetch("/api/admin/reports/missing");
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-                                                                                  if (loading) {
-                                                                                      return (
-                                                                                            <main className="min-h-screen bg-[#050816] text-white p-8">
-                                                                                                    <h1 className="text-4xl font-bold text-red-400">
-                                                                                                              Missing Reports
-                                                                                                                      </h1>
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#050816] text-white p-8">
+        <h1 className="text-4xl font-bold text-red-400">
+          Missing Reports
+        </h1>
 
-                                                                                                                              <p className="mt-6 text-gray-400">
-                                                                                                                                        Loading...
-                                                                                                                                                </p>
-                                                                                                                                                      </main>
-                                                                                                                                                          );
-                                                                                                                                                            }
+        <p className="mt-6 text-gray-400">
+          Loading...
+        </p>
+      </main>
+    );
+  }
 
-                                                                                                                                                              return (
-                                                                                                                                                                  <main className="min-h-screen bg-[#050816] text-white p-8">
+  return (
+    <main className="min-h-screen bg-[#050816] text-white p-8">
 
-                                                                                                                                                                        <h1 className="text-4xl font-bold text-red-400 mb-8">
-                                                                                                                                                                                Missing Reports
-                                                                                                                                                                                      </h1>
+      <h1 className="text-4xl font-bold text-red-400 mb-8">
+        Missing Reports
+      </h1>
 
-                                                                                                                                                                                            <div className="rounded-xl border border-red-800 bg-[#0b1024] p-6 mb-8">
-                                                                                                                                                                                                    <p className="text-gray-400">
-                                                                                                                                                                                                              Current Week
-                                                                                                                                                                                                                      </p>
+      <div className="rounded-xl border border-red-800 bg-[#0b1024] p-6 mb-8">
+        <p className="text-gray-400">
+          Current Week
+        </p>
 
-                                                                                                                                                                                                                              <h2 className="text-3xl font-bold mt-2">
-                                                                                                                                                                                                                                        {data?.currentWeek}
-                                                                                                                                                                                                                                                </h2>
+        <h2 className="text-3xl font-bold mt-2">
+          {data?.currentWeek}
+        </h2>
 
-                                                                                                                                                                                                                                                        <p className="text-red-400 mt-4">
-                                                                                                                                                                                                                                                                  Missing Players: {data?.totalMissing}
-                                                                                                                                                                                                                                                                          </p>
-                                                                                                                                                                                                                                                                                </div>
+        <p className="text-red-400 mt-4">
+          Missing Players: {data?.totalMissing}
+        </p>
+      </div>
 
-                                                                                                                                                                                                                                                                                      <div className="overflow-x-auto rounded-xl border border-blue-800">
+      <div className="overflow-x-auto rounded-xl border border-blue-800">
 
-                                                                                                                                                                                                                                                                                              <table className="w-full">
+        <table className="w-full">
 
-                                                                                                                                                                                                                                                                                                        <thead className="bg-[#111827]">
-                                                                                                                                                                                                                                                                                                                    <tr>
-                                                                                                                                                                                                                                                                                                                                  <th className="p-4 text-left">Player</th>
-                                                                                                                                                                                                                                                                                                                                                <th className="p-4 text-left">Player ID</th>
-                                                                                                                                                                                                                                                                                                                                                              <th className="p-4 text-left">Role</th>
-                                                                                                                                                                                                                                                                                                                                                                            <th className="p-4 text-left">Last Report</th>
-                                                                                                                                                                                                                                                                                                                                                                                        </tr>
-                                                                                                                                                                                                                                                                                                                                                                                                  </thead>
+          <thead className="bg-[#111827]">
+            <tr>
+              <th className="p-4 text-left">Player</th>
+              <th className="p-4 text-left">Player ID</th>
+              <th className="p-4 text-left">Role</th>
+              <th className="p-4 text-left">Last Report</th>
+            </tr>
+          </thead>
 
-                                                                                                                                                                                                                                                                                                                                                                                                            <tbody>
+          <tbody>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                        {data?.players.map((player) => (
-                                                                                                                                                                                                                                                                                                                                                                                                                                      <tr
-                                                                                                                                                                                                                                                                                                                                                                                                                                                      key={player.id}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                      className="border-t border-blue-900"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    >
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td className="p-4">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      {player.inGameName}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </td>
+            {data?.players.map((player) => (
+              <tr
+                key={player.id}
+                className="border-t border-blue-900"
+              >
+                <td className="p-4">
+                  {player.inGameName}
+                </td>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <td className="p-4">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        {player.playerId}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </td>
+                <td className="p-4">
+                  {player.playerId}
+                </td>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td className="p-4">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          {player.role}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </td>
+                <td className="p-4">
+                  {player.role}
+                </td>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <td className="p-4">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {player.lastReportWeek
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ? `Week ${player.lastReportWeek}`
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    : "Never"}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </tr>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ))}
+                <td className="p-4">
+                  {player.lastReportWeek
+                    ? `Week ${player.lastReportWeek}`
+                    : "Never"}
+                </td>
+              </tr>
+            ))}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </tbody>
+          </tbody>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </table>
+        </table>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
+      </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </main>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            );
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+    </main>
+  );
+}
