@@ -187,21 +187,6 @@ export default function ReportsPage() {
         </Link>
 
         <Link
-          href="/admin/reports/statistics"
-          className="rounded-2xl border border-yellow-700 bg-[#0b1024] p-6 transition hover:scale-[1.02] hover:border-yellow-500"
-        >
-          <div className="text-4xl">📈</div>
-
-          <h3 className="mt-4 text-xl font-bold">
-            Statistics
-          </h3>
-
-          <p className="mt-2 text-gray-400">
-            View alliance report analytics.
-          </p>
-        </Link>
-
-        <Link
           href="/admin/reports/export"
           className="rounded-2xl border border-green-700 bg-[#0b1024] p-6 transition hover:scale-[1.02] hover:border-green-500 md:col-span-2"
         >
