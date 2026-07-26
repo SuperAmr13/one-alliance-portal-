@@ -72,14 +72,15 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
-      success: true,
-      user: {
-        id: user.id,
-        playerId: user.playerId,
-        inGameName: user.inGameName,
-        role: user.role,
-      },
-    });
+        success: true,
+          user: {
+              id: user.id,
+                  playerId: user.playerId,
+                      inGameName: user.inGameName,
+                          role: user.role,
+                              mustChangePassword: user.mustChangePassword,
+                                },
+                                });
   } catch (error) {
     console.error(error);
 

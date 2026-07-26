@@ -2,17 +2,18 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import MembersStats from "@/components/admin/MembersStats"; 
+import MembersStats from "@/components/admin/MembersStats";
 import MembersHeader from "@/components/admin/MembersHeader";
 import MembersSearch from "@/components/admin/MembersSearch";
 import MembersFilters from "@/components/admin/MembersFilters";
 import MembersGrid from "@/components/admin/MembersGrid";
 import EmptyState from "@/components/admin/EmptyState";
 import EditMemberModal from "@/components/admin/EditMemberModal";
+import ResetPasswordModal from "@/components/admin/ResetPasswordModal";
 import DeleteMemberModal from "@/components/admin/DeleteMemberModal";
 import RoleModal from "@/components/admin/RoleModal";
 
-type Member ={
+type Member = {
   id: string;
   playerId: string;
   inGameName: string;
@@ -34,6 +35,7 @@ export default function MembersPage() {
 
   const [editOpen, setEditOpen] = useState(false);
   const [roleOpen, setRoleOpen] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   async function loadMembers() {
@@ -122,13 +124,13 @@ export default function MembersPage() {
     }
   }
 
-  async function handleDelete() {
+  async function handleResetPassword() {
     if (!selectedMember) return;
 
     setSaving(true);
 
     try {
-      await fetch("/api/admin/delete-member", {
+      const res = await fetch("/api/admin/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -138,37 +140,64 @@ export default function MembersPage() {
         }),
       });
 
-      setDeleteOpen(false);
-      await loadMembers();
+      const data = await res.json();
+
+      alert(`Temporary Password:\n\n${data.password}`);
+
+      setResetOpen(false);
     } finally {
       setSaving(false);
     }
   }
 
-  return (
+
+async function handleDelete() {
+  if (!selectedMember) return;
+
+  setSaving(true);
+
+  try {
+    await fetch("/api/admin/delete-member", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: selectedMember.id,
+      }),
+    });
+
+    setDeleteOpen(false);
+    await loadMembers();
+  } finally {
+    setSaving(false);
+  }
+}
+
+return (
   <main className="min-h-screen bg-[#050816] text-white p-8">
-    <div className="space-y-6"> 
+    <div className="space-y-6">
       <MembersHeader total={members.length} />
 
       <MembersStats
-  total={members.length}
-  owner={owners}
-  r5={r5}
-  r4={r4}
-  member={normalMembers}
-/> 
+        total={members.length}
+        owner={owners}
+        r5={r5}
+        r4={r4}
+        member={normalMembers}
+      />
 
       <MembersSearch
         value={search}
         onChange={setSearch}
       />
 
-       <MembersFilters
-  role={roleFilter}
-  sort={sort}
-  onRoleChange={setRoleFilter}
-  onSortChange={setSort}
-/> 
+      <MembersFilters
+        role={roleFilter}
+        sort={sort}
+        onRoleChange={setRoleFilter}
+        onSortChange={setSort}
+      />
 
       {loading ? (
         <div className="py-16 text-center text-zinc-400">
@@ -187,6 +216,11 @@ export default function MembersPage() {
             setSelectedMember(member);
             setSelectedRole(member.role);
             setRoleOpen(true);
+          }}
+          onReset={(member) => {
+            setSelectedMember(member);
+            setResetOpen(true);
+
           }}
           onDelete={(member) => {
             setSelectedMember(member);
@@ -213,6 +247,14 @@ export default function MembersPage() {
         onSave={handleRole}
       />
 
+      <ResetPasswordModal
+        member={selectedMember}
+        open={resetOpen}
+        loading={saving}
+        onClose={() => setResetOpen(false)}
+        onReset={handleResetPassword}
+      />
+
       <DeleteMemberModal
         member={selectedMember}
         open={deleteOpen}
@@ -220,7 +262,7 @@ export default function MembersPage() {
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
       />
-        </div>
+    </div>
   </main>
 );
 }

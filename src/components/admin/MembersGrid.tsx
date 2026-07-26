@@ -13,6 +13,7 @@ type Props = {
   members: Member[];
   onEdit: (member: Member) => void;
   onRole: (member: Member) => void;
+  onReset: (member: Member) => void;
   onDelete: (member: Member) => void;
 };
 
@@ -20,6 +21,7 @@ export default function MembersGrid({
   members,
   onEdit,
   onRole,
+  onReset,
   onDelete,
 }: Props) {
   if (members.length === 0) {
@@ -38,6 +40,7 @@ export default function MembersGrid({
           member={member}
           onEdit={onEdit}
           onRole={onRole}
+          onReset={onReset}
           onDelete={onDelete}
         />
       ))}

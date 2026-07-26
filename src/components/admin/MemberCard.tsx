@@ -11,6 +11,7 @@ type Props = {
   member: Member;
   onEdit: (member: Member) => void;
   onRole: (member: Member) => void;
+  onReset: (member: Member) => void;
   onDelete: (member: Member) => void;
 };
 
@@ -31,6 +32,7 @@ export default function MemberCard({
   member,
   onEdit,
   onRole,
+  onReset,
   onDelete,
 }: Props) {
   return (
@@ -69,7 +71,7 @@ export default function MemberCard({
         </p>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-3">
+      <div className="mt-6 grid grid-cols-2 gap-3">
         <button
           onClick={() => onEdit(member)}
           className="rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white transition duration-200 hover:bg-blue-500"
@@ -83,6 +85,13 @@ export default function MemberCard({
         >
           Role
         </button>
+
+        <button
+          onClick={() => onReset(member)}
+            className="rounded-xl bg-indigo-600 px-4 py-2 font-semibold text-white transition hover:bg-indigo-500"
+            >
+              Reset
+              </button>
 
         <button
           onClick={() => onDelete(member)}
