@@ -1,6 +1,9 @@
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
+
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/session";
+
 import ForcePasswordChange from "@/components/profile/ForcePasswordChange";
 
 export default async function PortalPage() {
@@ -9,6 +12,32 @@ export default async function PortalPage() {
   if (!user) {
     redirect("/login");
   }
+
+  const currentCycle = await prisma.allianceCycle.findFirst({
+    where: {
+      isCurrent: true,
+    },
+  });
+
+  const latestReport = await prisma.report.findFirst({
+    where: {
+      userId: user.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const currentReport = currentCycle
+    ? await prisma.report.findUnique({
+        where: {
+          userId_cycleId: {
+            userId: user.id,
+            cycleId: currentCycle.id,
+          },
+        },
+      })
+    : null;
 
   const isAdmin =
     user.role === "OWNER" ||
@@ -19,12 +48,13 @@ export default async function PortalPage() {
     <main className="min-h-screen bg-[#050816] px-5 py-8 text-white">
       <ForcePasswordChange
         force={user.mustChangePassword}
-          user={{
-              inGameName: user.inGameName,
-                  playerId: user.playerId,
-                      role: user.role,
-                        }}
-                        />
+        user={{
+          inGameName: user.inGameName,
+          playerId: user.playerId,
+          role: user.role,
+        }}
+      />
+
       <h1 className="text-3xl font-bold text-blue-400">
         Welcome, {user.inGameName} 👋
       </h1>
@@ -42,25 +72,39 @@ export default async function PortalPage() {
       </h2>
 
       <div className="grid grid-cols-2 gap-4">
+
         <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-4">
           <p className="text-sm text-gray-400">📅 Current Week</p>
-          <p className="mt-2 text-xl font-bold">Coming Soon</p>
+          <p className="mt-2 text-xl font-bold">
+            {currentCycle ? `Week ${currentCycle.weekNumber}` : "No Cycle"}
+          </p>
         </div>
 
         <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-4">
           <p className="text-sm text-gray-400">📝 Report Status</p>
-          <p className="mt-2 text-xl font-bold">Unknown</p>
+          <p className="mt-2 text-xl font-bold">
+            {currentReport ? "Submitted ✅" : "Not Submitted ❌"}
+          </p>
         </div>
 
         <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-4">
           <p className="text-sm text-gray-400">🔥 Hero Power</p>
-          <p className="mt-2 text-xl font-bold">---</p>
+          <p className="mt-2 text-xl font-bold">
+            {latestReport
+              ? Number(latestReport.heroPower).toLocaleString()
+              : "---"}
+          </p>
         </div>
 
         <div className="rounded-xl border border-blue-800 bg-[#0b1024] p-4">
           <p className="text-sm text-gray-400">⚔️ First Squad</p>
-          <p className="mt-2 text-xl font-bold">---</p>
+          <p className="mt-2 text-xl font-bold">
+            {latestReport
+              ? Number(latestReport.firstSquadPower).toLocaleString()
+              : "---"}
+          </p>
         </div>
+
       </div>
 
       <div className="mt-8 space-y-4">
