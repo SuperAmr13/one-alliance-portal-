@@ -14,7 +14,9 @@ export async function PATCH(req: NextRequest) {
     }
 
     const body = await req.json();
+
     const inGameName = body.inGameName?.trim();
+    const profileImageUrl = body.profileImageUrl;
 
     if (!inGameName || inGameName.length < 3) {
       return NextResponse.json(
@@ -29,12 +31,14 @@ export async function PATCH(req: NextRequest) {
       },
       data: {
         inGameName,
+        profileImageUrl,
       },
       select: {
         id: true,
         playerId: true,
         inGameName: true,
         role: true,
+        profileImageUrl: true,
       },
     });
 
