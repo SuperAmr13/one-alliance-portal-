@@ -4,107 +4,149 @@ import { useState } from "react";
 import { uploadImage } from "../utils/uploadImage";
 
 type SubmitReportData = {
-  heroPower: string;
+    heroPower: string;
     firstSquadPower: string;
-      firstSquadType: string;
+    firstSquadType: string;
 
-        heroImage: File | null;
-          wallImage: File | null;
-          };
+    heroImage: File | null;
+    wallImage: File | null;
 
-          export function useReportSubmit() {
-            const [loading, setLoading] = useState(false);
-              const [errors, setErrors] = useState<Record<string, string>>({});
-                const [successMessage, setSuccessMessage] = useState("");
+    existingHeroImage?: string;
+    existingWallImage?: string;
 
-                  async function submitReport(data: SubmitReportData) {
-                      setSuccessMessage("");
+    editing?: boolean;
+};
 
-                          const newErrors: Record<string, string> = {};
+export function useReportSubmit() {
+    const [loading, setLoading] = useState(false);
 
-                              if (!data.heroPower) {
-                                    newErrors.heroPower = "Hero Power is required.";
-                                        } else if (Number(data.heroPower) < 10000000) {
-                                              newErrors.heroPower = "Hero Power must be at least 8 digits.";
-                                                  }
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
-                                                      if (!data.firstSquadPower) {
-                                                            newErrors.firstSquadPower = "First Squad Power is required.";
-                                                                } else if (Number(data.firstSquadPower) < 10000000) {
-                                                                      newErrors.firstSquadPower =
-                                                                              "First Squad Power must be at least 8 digits.";
-                                                                                  }
+    const [successMessage, setSuccessMessage] = useState("");
 
-                                                                                      if (!data.firstSquadType) {
-                                                                                            newErrors.firstSquadType = "Please select a Squad Type.";
-                                                                                                }
+    async function submitReport(data: SubmitReportData) {
+        setSuccessMessage("");
 
-                                                                                                    if (!data.heroImage) {
-                                                                                                          newErrors.heroImage =
-                                                                                                                  "Please upload the Hero Power screenshot.";
-                                                                                                                      }
+        const newErrors: Record<string, string> = {};
 
-                                                                                                                          if (!data.wallImage) {
-                                                                                                                                newErrors.wallImage =
-                                                                                                                                        "Please upload the Wall screenshot.";
-                                                                                                                                            }
+        if (!data.heroPower) {
+            newErrors.heroPower = "Hero Power is required.";
+        } else if (Number(data.heroPower) < 10000000) {
+            newErrors.heroPower =
+                "Hero Power must be at least 8 digits.";
+        }
 
-                                                                                                                                                setErrors(newErrors);
+        if (!data.firstSquadPower) {
+            newErrors.firstSquadPower =
+                "First Squad Power is required.";
+        } else if (Number(data.firstSquadPower) < 10000000) {
+            newErrors.firstSquadPower =
+                "First Squad Power must be at least 8 digits.";
+        }
 
-                                                                                                                                                    if (Object.keys(newErrors).length > 0) {
-                                                                                                                                                          return false;
-                                                                                                                                                              }
+        if (!data.firstSquadType) {
+            newErrors.firstSquadType =
+                "Please select a Squad Type.";
+        }
 
-                                                                                                                                                                  setLoading(true);
+        if (
+            !data.editing &&
+            !data.heroImage
+        ) {
+            newErrors.heroImage =
+                "Please upload the Hero Power screenshot.";
+        }
 
-                                                                                                                                                                      try {
-                                                                                                                                                                            const heroImagePath = await uploadImage(data.heroImage!);
-                                                                                                                                                                                  const wallImagePath = await uploadImage(data.wallImage!);
+        if (
+            !data.editing &&
+            !data.wallImage
+        ) {
+            newErrors.wallImage =
+                "Please upload the Wall screenshot.";
+        }
 
-                                                                                                                                                                                        const response = await fetch("/api/reports", {
-                                                                                                                                                                                                method: "POST",
-                                                                                                                                                                                                        headers: {
-                                                                                                                                                                                                                  "Content-Type": "application/json",
-                                                                                                                                                                                                                          },
-                                                                                                                                                                                                                                  body: JSON.stringify({
-                                                                                                                                                                                                                                            heroPower: data.heroPower,
-                                                                                                                                                                                                                                                      firstSquadPower: data.firstSquadPower,
-                                                                                                                                                                                                                                                                firstSquadType: data.firstSquadType,
-                                                                                                                                                                                                                                                                          heroImagePath,
-                                                                                                                                                                                                                                                                                    wallImagePath,
-                                                                                                                                                                                                                                                                                            }),
-                                                                                                                                                                                                                                                                                                  });
+        setErrors(newErrors);
 
-                                                                                                                                                                                                                                                                                                        const result = await response.json();
+        if (Object.keys(newErrors).length > 0) {
+            return false;
+        }
 
-                                                                                                                                                                                                                                                                                                              if (!response.ok) {
-                                                                                                                                                                                                                                                                                                                      throw new Error(result.error ?? "Failed to submit report.");
-                                                                                                                                                                                                                                                                                                                            }
+        setLoading(true);
 
-                                                                                                                                                                                                                                                                                                                                  setErrors({});
-                                                                                                                                                                                                                                                                                                                                        setSuccessMessage("Report submitted successfully.");
+        try {
+            let heroImagePath =
+                data.existingHeroImage ?? null;
 
-                                                                                                                                                                                                                                                                                                                                              return true;
-                                                                                                                                                                                                                                                                                                                                                  } catch (error) {
-                                                                                                                                                                                                                                                                                                                                                        setErrors({
-                                                                                                                                                                                                                                                                                                                                                                submit:
-                                                                                                                                                                                                                                                                                                                                                                          error instanceof Error
-                                                                                                                                                                                                                                                                                                                                                                                      ? error.message
-                                                                                                                                                                                                                                                                                                                                                                                                  : "Failed to submit report.",
-                                                                                                                                                                                                                                                                                                                                                                                                        });
+            let wallImagePath =
+                data.existingWallImage ?? null;
 
-                                                                                                                                                                                                                                                                                                                                                                                                              return false;
-                                                                                                                                                                                                                                                                                                                                                                                                                  } finally {
-                                                                                                                                                                                                                                                                                                                                                                                                                        setLoading(false);
-                                                                                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                                                                                              }
+            if (data.heroImage) {
+                heroImagePath = await uploadImage(
+                    data.heroImage
+                );
+            }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                return {
-                                                                                                                                                                                                                                                                                                                                                                                                                                    loading,
-                                                                                                                                                                                                                                                                                                                                                                                                                                        errors,
-                                                                                                                                                                                                                                                                                                                                                                                                                                            successMessage,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                submitReport,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    setErrors,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        setSuccessMessage,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                          };
-                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
+            if (data.wallImage) {
+                wallImagePath = await uploadImage(
+                    data.wallImage
+                );
+            }
+            const response = await fetch("/api/reports", {
+                method: data.editing ? "PUT" : "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    heroPower: data.heroPower,
+                    firstSquadPower: data.firstSquadPower,
+                    firstSquadType: data.firstSquadType,
+                    heroImagePath,
+                    wallImagePath,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.error ??
+                    (data.editing
+                        ? "Failed to update report."
+                        : "Failed to submit report.")
+                );
+            }
+
+            setErrors({});
+
+            setSuccessMessage(
+                data.editing
+                    ? "Report updated successfully."
+                    : "Report submitted successfully."
+            );
+
+            return true;
+        } catch (error) {
+            setErrors({
+                submit:
+                    error instanceof Error
+                        ? error.message
+                        : data.editing
+                            ? "Failed to update report."
+                            : "Failed to submit report.",
+            });
+
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return {
+        loading,
+        errors,
+        successMessage,
+        submitReport,
+        setErrors,
+        setSuccessMessage,
+    };
+}
