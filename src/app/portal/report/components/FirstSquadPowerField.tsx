@@ -21,18 +21,18 @@ export default function FirstSquadPowerField({
 
       <input
         type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
-        value={value}
-        onChange={(e) =>
-          onChange(e.target.value.replace(/\D/g, ""))
-        }
-        className={`w-full rounded-xl border bg-[#111933] p-3 text-white outline-none transition ${
-          error
-            ? "border-red-500 focus:border-red-500"
-            : "border-blue-800 focus:border-blue-500"
-        }`}
-      />
+          inputMode="numeric"
+            value={value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              onChange={(e) => {
+                  const raw = e.target.value.replace(/,/g, "").replace(/\D/g, "");
+                      onChange(raw);
+                        }}
+                          className={`w-full rounded-xl border bg-[#111933] p-3 text-white outline-none transition ${
+                              error
+                                    ? "border-red-500 focus:border-red-500"
+                                          : "border-blue-800 focus:border-blue-500"
+                                            }`}
+                                            />
 
       {error && (
         <p className="mt-2 text-sm text-red-400">
