@@ -199,7 +199,7 @@ export default function ReportPage() {
             }}
             error={errors.firstSquadPower}
           />
-          )          <SquadTypeField
+          <SquadTypeField
             value={firstSquadType}
             onChange={(value) => {
               setFirstSquadType(value);
