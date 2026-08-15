@@ -4,6 +4,7 @@ import { supabaseServer } from "@/lib/supabase-server";
 import {
   adminRoute,
   notFound,
+  badRequest,
 } from "@/lib/api";
 
 type Params = {
@@ -56,13 +57,21 @@ export async function GET(
       notFound("Report not found.");
     }
 
-    const { data: heroImage } = await supabaseServer.storage
-      .from("reports")
-      .createSignedUrl(report.heroPowerImage, 60 * 60);
+    const { data: heroImage } =
+      await supabaseServer.storage
+        .from("reports")
+        .createSignedUrl(
+          report.heroPowerImage,
+          60 * 60
+        );
 
-    const { data: wallImage } = await supabaseServer.storage
-      .from("reports")
-      .createSignedUrl(report.wallImage, 60 * 60);
+    const { data: wallImage } =
+      await supabaseServer.storage
+        .from("reports")
+        .createSignedUrl(
+          report.wallImage,
+          60 * 60
+        );
 
     return {
       player: {
@@ -76,12 +85,111 @@ export async function GET(
         cycleId: report.cycleId,
         weekNumber: report.cycle.weekNumber,
         heroPower: report.heroPower.toString(),
-        firstSquadPower: report.firstSquadPower.toString(),
+        firstSquadPower:
+          report.firstSquadPower.toString(),
         firstSquadType: report.firstSquadType,
-        heroPowerImage: heroImage?.signedUrl ?? "",
-        wallImage: wallImage?.signedUrl ?? "",
+        heroPowerImage:
+          heroImage?.signedUrl ?? "",
+        wallImage:
+          wallImage?.signedUrl ?? "",
         createdAt: report.createdAt,
         updatedAt: report.updatedAt,
+      },
+    };
+  });
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: Params
+) {
+  return adminRoute(async () => {
+    const { playerId, week } = await params;
+
+    const body = await request.json();
+
+    if (!body.heroPower) {
+      badRequest("Hero Power is required.");
+    }
+
+    if (!body.firstSquadPower) {
+      badRequest("First Squad Power is required.");
+    }
+
+    if (!body.firstSquadType) {
+      badRequest("First Squad Type is required.");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        playerId,
+      },
+    });
+
+    if (!user) {
+      notFound("Player not found.");
+    }
+
+    const cycle = await prisma.allianceCycle.findUnique({
+      where: {
+        weekNumber: Number(week),
+      },
+    });
+
+    if (!cycle) {
+      notFound("Alliance cycle not found.");
+    }
+
+    const report = await prisma.report.findUnique({
+      where: {
+        userId_cycleId: {
+          userId: user.id,
+          cycleId: cycle.id,
+        },
+      },
+    });
+
+    if (!report) {
+      notFound("Report not found.");
+    }
+
+    const heroPowerImage =
+      body.heroImagePath ||
+      report.heroPowerImage;
+
+    const wallImage =
+      body.wallImagePath ||
+      report.wallImage;
+
+    const updatedReport =
+      await prisma.report.update({
+        where: {
+          id: report.id,
+        },
+        data: {
+          heroPower: BigInt(body.heroPower),
+          firstSquadPower:
+            BigInt(body.firstSquadPower),
+          firstSquadType:
+            body.firstSquadType,
+          heroPowerImage,
+          wallImage,
+        },
+      });
+
+    return {
+      success: true,
+      message: "Report updated successfully.",
+      report: {
+        id: updatedReport.id,
+        heroPower:
+          updatedReport.heroPower.toString(),
+        firstSquadPower:
+          updatedReport.firstSquadPower.toString(),
+        firstSquadType:
+          updatedReport.firstSquadType,
+        updatedAt:
+          updatedReport.updatedAt,
       },
     };
   });
