@@ -265,6 +265,7 @@ export default function WeekPage({
   const canEdit =
     player.role === "R4" ||
     player.role === "R5";
+    player.role === "OWNER";
 
   return (
     <main className="min-h-screen bg-[#050816] p-8 text-white">
