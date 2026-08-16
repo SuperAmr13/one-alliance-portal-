@@ -20,6 +20,76 @@ enum SquadType {
   MISSILES
 }
 
+/**
+ * ============================================================
+ * DESERT STORM ENUMS
+ * ============================================================
+ */
+
+enum DesertStormStatus {
+  VOTING
+  STAGE_1
+  STAGE_2
+  TEAM_ASSIGNMENT
+  MAP_SETUP
+  PUBLISHED
+  COMPLETED
+}
+
+enum DesertStormVote {
+  YES
+  NO
+}
+
+enum DesertStormTeam {
+  A
+  B
+}
+
+enum DesertStormPosition {
+  MAIN
+  SUB
+}
+
+enum DesertStormPhase {
+  PHASE_1
+  PHASE_2
+}
+
+enum DesertStormSelectionSource {
+  STAGE_1_AUTO
+  STAGE_1_MANUAL
+  STAGE_2_PRIORITY
+  FORCE_MAIN
+  ADMIN_SWAP
+  ADMIN_ADD
+  ADMIN_REMOVE
+}
+
+enum DesertStormActionType {
+  CREATE_CYCLE
+  UPDATE_CYCLE
+  MANUAL_STAGE_1
+  MANUAL_EXCLUDE
+  FORCE_MAIN
+  ADD_PLAYER
+  REMOVE_PLAYER
+  SWAP_PLAYER
+  CHANGE_TEAM
+  CHANGE_POSITION
+  PLACE_PLAYER
+  MOVE_PLAYER
+  PUBLISH_MAP
+  UNPUBLISH_MAP
+  FINALIZE_ROSTER
+}
+
+/**
+ * ============================================================
+ * USER
+ * ============================================================
+ */
+
 model User {
   id           String @id @default(cuid())
   playerId     String @unique
@@ -36,15 +106,25 @@ model User {
   sessions Session[]
   reports  Report[]
 
+  desertStormParticipants  DesertStormParticipant[]
+  desertStormActions       DesertStormAction[]
+  desertStormMapPlacements DesertStormMapPlacement[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+/**
+ * ============================================================
+ * WEEKLY REPORT
+ * ============================================================
+ */
 
 model Report {
   id String @id @default(cuid())
 
   userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   cycleId String
   cycle   AllianceCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
@@ -56,17 +136,25 @@ model Report {
   heroPowerImage String
   wallImage      String
 
+  desertStormParticipants DesertStormParticipant[] @relation("DSBSourceReport")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([userId, cycleId])
 }
 
+/**
+ * ============================================================
+ * ALLIANCE WEEKLY CYCLE
+ * ============================================================
+ */
+
 model AllianceCycle {
   id String @id @default(cuid())
 
   name       String
-  weekNumber Int @unique
+  weekNumber Int    @unique
 
   isCurrent Boolean @default(false)
   isOpen    Boolean @default(true)
@@ -79,9 +167,17 @@ model AllianceCycle {
 
   reports Report[]
 
+  desertStormCycle DesertStormCycle?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+/**
+ * ============================================================
+ * ALLIANCE SETTINGS
+ * ============================================================
+ */
 
 model AllianceSettings {
   id Int @id @default(1)
@@ -98,6 +194,12 @@ model AllianceSettings {
   updatedAt DateTime @updatedAt
 }
 
+/**
+ * ============================================================
+ * NEWS
+ * ============================================================
+ */
+
 model News {
   id String @id @default(cuid())
 
@@ -106,11 +208,17 @@ model News {
   pinned  Boolean @default(false)
 
   authorId String
-  author   User @relation(fields: [authorId], references: [id])
+  author   User   @relation(fields: [authorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+/**
+ * ============================================================
+ * SESSION
+ * ============================================================
+ */
 
 model Session {
   id String @id @default(cuid())
@@ -118,9 +226,264 @@ model Session {
   token String @unique
 
   userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
 
   createdAt DateTime @default(now())
+}
+
+/**
+ * ============================================================
+ * DESERT STORM CYCLE
+ * ============================================================
+ */
+
+model DesertStormCycle {
+  id String @id @default(cuid())
+
+  cycleNumber Int    @unique
+  name        String
+
+  votingDate    DateTime
+  votingOpenAt  DateTime
+  votingCloseAt DateTime
+
+  eventDate DateTime
+
+  status DesertStormStatus @default(VOTING)
+
+  /**
+   * Weekly Report source.
+   * This is the Alliance Cycle that started
+   * on the Thursday immediately before voting Tuesday.
+   */
+
+  sourceAllianceCycleId String        @unique
+  sourceAllianceCycle   AllianceCycle @relation(fields: [sourceAllianceCycleId], references: [id], onDelete: Restrict)
+
+  /**
+   * Stage 1 manual mode.
+   */
+
+  manualStage1Enabled Boolean @default(false)
+
+  /**
+   * Map
+   */
+
+  mapImageUrl  String?
+  mapPublished Boolean   @default(false)
+  publishedAt  DateTime?
+
+  participants  DesertStormParticipant[]
+  roster        DesertStormRoster[]
+  mapPlacements DesertStormMapPlacement[]
+  actions       DesertStormAction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/**
+ * ============================================================
+ * DESERT STORM PARTICIPANT
+ * ============================================================
+ */
+
+model DesertStormParticipant {
+  id String @id @default(cuid())
+
+  cycleId String
+  cycle   DesertStormCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /**
+   * Voting
+   */
+
+  vote DesertStormVote?
+
+  /**
+   * Weekly Report snapshot
+   */
+
+  sourceReportId String?
+
+  sourceReport Report? @relation("DSBSourceReport", fields: [sourceReportId], references: [id], onDelete: SetNull)
+
+  firstSquadPowerSnapshot BigInt?
+
+  weeklyReportSubmitted Boolean @default(false)
+
+  /**
+   * Stage 2 history
+   */
+
+  mainAppearancesLast3Weeks Int @default(0)
+
+  lastParticipationCycleId     String?
+  lastParticipationCycleNumber Int?
+
+  lastParticipationDsbPoints Int?
+
+  /**
+   * Previous week punishment data
+   */
+
+  selectedLastWeek            Boolean @default(false)
+  participatedLastWeek        Boolean @default(false)
+  notifiedUnavailableLastWeek Boolean @default(false)
+
+  punishedThisWeek Boolean @default(false)
+
+  /**
+   * Admin overrides
+   */
+
+  manualExclude Boolean @default(false)
+
+  manualStage1Pick Boolean @default(false)
+
+  manualStage2ForceMain Boolean @default(false)
+
+  /**
+   * Final roster
+   */
+
+  roster DesertStormRoster?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cycleId, userId])
+  @@index([cycleId, vote])
+}
+
+/**
+ * ============================================================
+ * DESERT STORM FINAL ROSTER
+ * ============================================================
+ */
+
+model DesertStormRoster {
+  id String @id @default(cuid())
+
+  cycleId String
+  cycle   DesertStormCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+
+  participantId String                 @unique
+  participant   DesertStormParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  team DesertStormTeam
+
+  position DesertStormPosition
+
+  /**
+   * MAIN = 1-20
+   * SUB  = 1-10
+   */
+
+  slotNumber Int
+
+  selectionSource DesertStormSelectionSource
+
+  finalized Boolean @default(false)
+
+  mapPlacements DesertStormMapPlacement[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cycleId, team, position, slotNumber])
+  @@index([cycleId, team, position])
+}
+
+/**
+ * ============================================================
+ * DESERT STORM MAP PLACEMENT
+ * ============================================================
+ */
+
+model DesertStormMapPlacement {
+  id String @id @default(cuid())
+
+  cycleId String
+  cycle   DesertStormCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+
+  rosterId String
+  roster   DesertStormRoster @relation(fields: [rosterId], references: [id], onDelete: Cascade)
+
+  /**
+   * Phase 1 / Phase 2
+   */
+
+  phase DesertStormPhase
+
+  /**
+   * Responsive coordinates.
+   * Stored as percentage-based coordinates.
+   */
+
+  x Decimal @db.Decimal(6, 3)
+  y Decimal @db.Decimal(6, 3)
+
+  label String?
+
+  /**
+   * Admin who placed or moved the marker.
+   */
+
+  placedByUserId String
+  placedBy       User   @relation(fields: [placedByUserId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([rosterId, phase])
+  @@index([cycleId, phase])
+}
+
+/**
+ * ============================================================
+ * DESERT STORM ADMIN ACTION LOG
+ * ============================================================
+ */
+
+model DesertStormAction {
+  id String @id @default(cuid())
+
+  cycleId String
+  cycle   DesertStormCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+
+  /**
+   * Admin who performed the action.
+   */
+
+  adminUserId String
+  adminUser   User   @relation(fields: [adminUserId], references: [id], onDelete: Restrict)
+
+  actionType DesertStormActionType
+
+  /**
+   * Optional affected player.
+   * No foreign key intentionally:
+   * audit history should remain even if a player
+   * is removed from a roster.
+   */
+
+  targetUserId String?
+
+  /**
+   * Additional action information.
+   */
+
+  details Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([cycleId, createdAt])
+  @@index([targetUserId])
 }

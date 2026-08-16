@@ -1,0 +1,399 @@
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Loaded Prisma config from prisma.config.ts.
+
+warn The Prisma config file in prisma.config.ts overrides the deprecated `package.json#prisma` property in package.json.
+  For more information, see: https://pris.ly/prisma-config
+
+Prisma config detected, skipping environment variable loading.
+Prisma schema loaded from prisma/schema.prisma
+
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:262[0m
+[1;94m   | [0m
+[1;94m261 | [0m
+[1;94m262 | [0m  [1;91msourceAllianceCycle AllianceCycle @relation([0m
+[1;94m263 | [0m    fields: [sourceAllianceCycleId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:263[0m
+[1;94m   | [0m
+[1;94m262 | [0m  sourceAllianceCycle AllianceCycle @relation(
+[1;94m263 | [0m    [1;91mfields: [sourceAllianceCycleId],[0m
+[1;94m264 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:264[0m
+[1;94m   | [0m
+[1;94m263 | [0m    fields: [sourceAllianceCycleId],
+[1;94m264 | [0m    [1;91mreferences: [id],[0m
+[1;94m265 | [0m    onDelete: Restrict
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:265[0m
+[1;94m   | [0m
+[1;94m264 | [0m    references: [id],
+[1;94m265 | [0m    onDelete[1;91m:[0m Restrict
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:266[0m
+[1;94m   | [0m
+[1;94m265 | [0m    onDelete: Restrict
+[1;94m266 | [0m  [1;91m)[0m
+[1;94m267 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:304[0m
+[1;94m   | [0m
+[1;94m303 | [0m
+[1;94m304 | [0m  [1;91mcycle DesertStormCycle @relation([0m
+[1;94m305 | [0m    fields: [cycleId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:305[0m
+[1;94m   | [0m
+[1;94m304 | [0m  cycle DesertStormCycle @relation(
+[1;94m305 | [0m    [1;91mfields: [cycleId],[0m
+[1;94m306 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:306[0m
+[1;94m   | [0m
+[1;94m305 | [0m    fields: [cycleId],
+[1;94m306 | [0m    [1;91mreferences: [id],[0m
+[1;94m307 | [0m    onDelete: Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:307[0m
+[1;94m   | [0m
+[1;94m306 | [0m    references: [id],
+[1;94m307 | [0m    onDelete[1;91m:[0m Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:308[0m
+[1;94m   | [0m
+[1;94m307 | [0m    onDelete: Cascade
+[1;94m308 | [0m  [1;91m)[0m
+[1;94m309 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:312[0m
+[1;94m   | [0m
+[1;94m311 | [0m
+[1;94m312 | [0m  [1;91muser User @relation([0m
+[1;94m313 | [0m    fields: [userId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:313[0m
+[1;94m   | [0m
+[1;94m312 | [0m  user User @relation(
+[1;94m313 | [0m    [1;91mfields: [userId],[0m
+[1;94m314 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:314[0m
+[1;94m   | [0m
+[1;94m313 | [0m    fields: [userId],
+[1;94m314 | [0m    [1;91mreferences: [id],[0m
+[1;94m315 | [0m    onDelete: Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:315[0m
+[1;94m   | [0m
+[1;94m314 | [0m    references: [id],
+[1;94m315 | [0m    onDelete[1;91m:[0m Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:316[0m
+[1;94m   | [0m
+[1;94m315 | [0m    onDelete: Cascade
+[1;94m316 | [0m  [1;91m)[0m
+[1;94m317 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:338[0m
+[1;94m   | [0m
+[1;94m337 | [0m
+[1;94m338 | [0m  [1;91msourceReport Report? @relation([0m
+[1;94m339 | [0m    "DSBSourceReport",
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:339[0m
+[1;94m   | [0m
+[1;94m338 | [0m  sourceReport Report? @relation(
+[1;94m339 | [0m    [1;91m"DSBSourceReport",[0m
+[1;94m340 | [0m    fields: [sourceReportId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:340[0m
+[1;94m   | [0m
+[1;94m339 | [0m    "DSBSourceReport",
+[1;94m340 | [0m    [1;91mfields: [sourceReportId],[0m
+[1;94m341 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:341[0m
+[1;94m   | [0m
+[1;94m340 | [0m    fields: [sourceReportId],
+[1;94m341 | [0m    [1;91mreferences: [id],[0m
+[1;94m342 | [0m    onDelete: SetNull
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:342[0m
+[1;94m   | [0m
+[1;94m341 | [0m    references: [id],
+[1;94m342 | [0m    onDelete[1;91m:[0m SetNull
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:343[0m
+[1;94m   | [0m
+[1;94m342 | [0m    onDelete: SetNull
+[1;94m343 | [0m  [1;91m)[0m
+[1;94m344 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:449[0m
+[1;94m   | [0m
+[1;94m448 | [0m
+[1;94m449 | [0m  [1;91mcycle DesertStormCycle @relation([0m
+[1;94m450 | [0m    fields: [cycleId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:450[0m
+[1;94m   | [0m
+[1;94m449 | [0m  cycle DesertStormCycle @relation(
+[1;94m450 | [0m    [1;91mfields: [cycleId],[0m
+[1;94m451 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:451[0m
+[1;94m   | [0m
+[1;94m450 | [0m    fields: [cycleId],
+[1;94m451 | [0m    [1;91mreferences: [id],[0m
+[1;94m452 | [0m    onDelete: Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:452[0m
+[1;94m   | [0m
+[1;94m451 | [0m    references: [id],
+[1;94m452 | [0m    onDelete[1;91m:[0m Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:453[0m
+[1;94m   | [0m
+[1;94m452 | [0m    onDelete: Cascade
+[1;94m453 | [0m  [1;91m)[0m
+[1;94m454 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:460[0m
+[1;94m   | [0m
+[1;94m459 | [0m
+[1;94m460 | [0m  [1;91mparticipant DesertStormParticipant @relation([0m
+[1;94m461 | [0m    fields: [participantId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:461[0m
+[1;94m   | [0m
+[1;94m460 | [0m  participant DesertStormParticipant @relation(
+[1;94m461 | [0m    [1;91mfields: [participantId],[0m
+[1;94m462 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:462[0m
+[1;94m   | [0m
+[1;94m461 | [0m    fields: [participantId],
+[1;94m462 | [0m    [1;91mreferences: [id],[0m
+[1;94m463 | [0m    onDelete: Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:463[0m
+[1;94m   | [0m
+[1;94m462 | [0m    references: [id],
+[1;94m463 | [0m    onDelete[1;91m:[0m Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:464[0m
+[1;94m   | [0m
+[1;94m463 | [0m    onDelete: Cascade
+[1;94m464 | [0m  [1;91m)[0m
+[1;94m465 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:527[0m
+[1;94m   | [0m
+[1;94m526 | [0m
+[1;94m527 | [0m  [1;91mcycle DesertStormCycle @relation([0m
+[1;94m528 | [0m    fields: [cycleId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:528[0m
+[1;94m   | [0m
+[1;94m527 | [0m  cycle DesertStormCycle @relation(
+[1;94m528 | [0m    [1;91mfields: [cycleId],[0m
+[1;94m529 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:529[0m
+[1;94m   | [0m
+[1;94m528 | [0m    fields: [cycleId],
+[1;94m529 | [0m    [1;91mreferences: [id],[0m
+[1;94m530 | [0m    onDelete: Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:530[0m
+[1;94m   | [0m
+[1;94m529 | [0m    references: [id],
+[1;94m530 | [0m    onDelete[1;91m:[0m Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:531[0m
+[1;94m   | [0m
+[1;94m530 | [0m    onDelete: Cascade
+[1;94m531 | [0m  [1;91m)[0m
+[1;94m532 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:535[0m
+[1;94m   | [0m
+[1;94m534 | [0m
+[1;94m535 | [0m  [1;91mroster DesertStormRoster @relation([0m
+[1;94m536 | [0m    fields: [rosterId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:536[0m
+[1;94m   | [0m
+[1;94m535 | [0m  roster DesertStormRoster @relation(
+[1;94m536 | [0m    [1;91mfields: [rosterId],[0m
+[1;94m537 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:537[0m
+[1;94m   | [0m
+[1;94m536 | [0m    fields: [rosterId],
+[1;94m537 | [0m    [1;91mreferences: [id],[0m
+[1;94m538 | [0m    onDelete: Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:538[0m
+[1;94m   | [0m
+[1;94m537 | [0m    references: [id],
+[1;94m538 | [0m    onDelete[1;91m:[0m Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:539[0m
+[1;94m   | [0m
+[1;94m538 | [0m    onDelete: Cascade
+[1;94m539 | [0m  [1;91m)[0m
+[1;94m540 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:568[0m
+[1;94m   | [0m
+[1;94m567 | [0m
+[1;94m568 | [0m  [1;91mplacedBy User @relation([0m
+[1;94m569 | [0m    fields: [placedByUserId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:569[0m
+[1;94m   | [0m
+[1;94m568 | [0m  placedBy User @relation(
+[1;94m569 | [0m    [1;91mfields: [placedByUserId],[0m
+[1;94m570 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:570[0m
+[1;94m   | [0m
+[1;94m569 | [0m    fields: [placedByUserId],
+[1;94m570 | [0m    [1;91mreferences: [id],[0m
+[1;94m571 | [0m    onDelete: Restrict
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:571[0m
+[1;94m   | [0m
+[1;94m570 | [0m    references: [id],
+[1;94m571 | [0m    onDelete[1;91m:[0m Restrict
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:572[0m
+[1;94m   | [0m
+[1;94m571 | [0m    onDelete: Restrict
+[1;94m572 | [0m  [1;91m)[0m
+[1;94m573 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:595[0m
+[1;94m   | [0m
+[1;94m594 | [0m
+[1;94m595 | [0m  [1;91mcycle DesertStormCycle @relation([0m
+[1;94m596 | [0m    fields: [cycleId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:596[0m
+[1;94m   | [0m
+[1;94m595 | [0m  cycle DesertStormCycle @relation(
+[1;94m596 | [0m    [1;91mfields: [cycleId],[0m
+[1;94m597 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:597[0m
+[1;94m   | [0m
+[1;94m596 | [0m    fields: [cycleId],
+[1;94m597 | [0m    [1;91mreferences: [id],[0m
+[1;94m598 | [0m    onDelete: Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:598[0m
+[1;94m   | [0m
+[1;94m597 | [0m    references: [id],
+[1;94m598 | [0m    onDelete[1;91m:[0m Cascade
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:599[0m
+[1;94m   | [0m
+[1;94m598 | [0m    onDelete: Cascade
+[1;94m599 | [0m  [1;91m)[0m
+[1;94m600 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:606[0m
+[1;94m   | [0m
+[1;94m605 | [0m
+[1;94m606 | [0m  [1;91madminUser User @relation([0m
+[1;94m607 | [0m    fields: [adminUserId],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:607[0m
+[1;94m   | [0m
+[1;94m606 | [0m  adminUser User @relation(
+[1;94m607 | [0m    [1;91mfields: [adminUserId],[0m
+[1;94m608 | [0m    references: [id],
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:608[0m
+[1;94m   | [0m
+[1;94m607 | [0m    fields: [adminUserId],
+[1;94m608 | [0m    [1;91mreferences: [id],[0m
+[1;94m609 | [0m    onDelete: Restrict
+[1;94m   | [0m
+[1;91merror[0m: [1mField declarations don't require a `:`.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:609[0m
+[1;94m   | [0m
+[1;94m608 | [0m    references: [id],
+[1;94m609 | [0m    onDelete[1;91m:[0m Restrict
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating: This line is not a valid field or attribute definition.[0m
+  [1;94m-->[0m  [4mprisma/schema.prisma:610[0m
+[1;94m   | [0m
+[1;94m609 | [0m    onDelete: Restrict
+[1;94m610 | [0m  [1;91m)[0m
+[1;94m611 | [0m
+[1;94m   | [0m
+
+Validation Error Count: 56
+[Context: validate]
+
+Prisma CLI Version : 6.16.3
