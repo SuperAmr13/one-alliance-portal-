@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local Prisma/debug files
+prisma-current-db.prisma
+prisma-current-db.txt
+prisma-dsb.sql
+prisma-error.txt
+prisma-history-diff.sql
+project-tree.txt
