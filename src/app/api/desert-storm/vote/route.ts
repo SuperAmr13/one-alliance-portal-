@@ -47,27 +47,42 @@ export async function POST(request: Request) {
       );
     }
 
-    const participant =
-      await prisma.desertStormParticipant.upsert({
+    const existingParticipant =
+      await prisma.desertStormParticipant.findUnique({
         where: {
           cycleId_userId: {
             cycleId: cycle.id,
             userId: user.id,
           },
         },
-        create: {
+        select: {
+          id: true,
+          vote: true,
+        },
+      });
+
+    if (existingParticipant?.vote) {
+      return NextResponse.json(
+        {
+          error: "You have already voted for this Desert Storm cycle.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const participant =
+      existingParticipant ??
+      (await prisma.desertStormParticipant.create({
+        data: {
           cycleId: cycle.id,
           userId: user.id,
-          vote,
-        },
-        update: {
           vote,
         },
         select: {
           id: true,
           vote: true,
         },
-      });
+      }));
 
     return NextResponse.json({
       success: true,
