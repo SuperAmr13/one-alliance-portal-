@@ -15,12 +15,10 @@ export async function GET() {
 
     const cycle = await prisma.desertStormCycle.findFirst({
       where: {
-        status: {
-          not: "COMPLETED",
-        },
+        status: "VOTING",
       },
       orderBy: {
-        eventDate: "asc",
+        votingOpenAt: "desc",
       },
     });
 
