@@ -25,6 +25,14 @@ type DesertStormCycle = {
   sourceAllianceCycle: AllianceCycle;
 };
 
+function toISOStringFromLocal(value: string) {
+  if (!value) {
+    return "";
+  }
+
+  return new Date(value).toISOString();
+}
+
 export default function DesertStormAdminPage() {
   const [allianceCycles, setAllianceCycles] = useState<
     AllianceCycle[]
@@ -53,7 +61,10 @@ export default function DesertStormAdminPage() {
       setError("");
 
       const response = await fetch(
-        "/api/admin/desert-storm/cycles"
+        "/api/admin/desert-storm/cycles",
+        {
+          cache: "no-store",
+        }
       );
 
       const data = await response.json();
@@ -99,8 +110,10 @@ export default function DesertStormAdminPage() {
             name,
             sourceAllianceCycleId,
             votingDate,
-            votingOpenAt,
-            votingCloseAt,
+            votingOpenAt:
+              toISOStringFromLocal(votingOpenAt),
+            votingCloseAt:
+              toISOStringFromLocal(votingCloseAt),
             eventDate,
           }),
         }
@@ -110,7 +123,8 @@ export default function DesertStormAdminPage() {
 
       if (!response.ok) {
         throw new Error(
-          data.error || "Failed to create Desert Storm cycle."
+          data.error ||
+            "Failed to create Desert Storm cycle."
         );
       }
 
