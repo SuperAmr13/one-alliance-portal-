@@ -44,7 +44,9 @@ export default function DesertStormAdminPage() {
 
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [syncingCycleId, setSyncingCycleId] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const [name, setName] = useState("");
   const [sourceAllianceCycleId, setSourceAllianceCycleId] =
@@ -70,7 +72,9 @@ export default function DesertStormAdminPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to load data.");
+        throw new Error(
+          data.error || "Failed to load data."
+        );
       }
 
       setAllianceCycles(data.allianceCycles);
@@ -98,6 +102,7 @@ export default function DesertStormAdminPage() {
     try {
       setCreating(true);
       setError("");
+      setSuccess("");
 
       const response = await fetch(
         "/api/admin/desert-storm/cycles",
@@ -135,6 +140,10 @@ export default function DesertStormAdminPage() {
       setVotingCloseAt("");
       setEventDate("");
 
+      setSuccess(
+        "Desert Storm cycle created successfully."
+      );
+
       await loadData();
     } catch (error) {
       setError(
@@ -144,6 +153,51 @@ export default function DesertStormAdminPage() {
       );
     } finally {
       setCreating(false);
+    }
+  }
+
+  async function handleStage1Sync(cycleId: string) {
+    try {
+      setSyncingCycleId(cycleId);
+      setError("");
+      setSuccess("");
+
+      const response = await fetch(
+        "/api/admin/desert-storm/stage-1",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            cycleId,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+            "Failed to sync Stage 1 players."
+        );
+      }
+
+      setSuccess(
+        data.message ||
+          "Stage 1 players synced successfully."
+      );
+
+      await loadData();
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
+      );
+    } finally {
+      setSyncingCycleId("");
     }
   }
 
@@ -170,6 +224,12 @@ export default function DesertStormAdminPage() {
         {error && (
           <div className="mb-6 rounded-xl border border-red-700 bg-red-950/40 p-4 text-red-300">
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-6 rounded-xl border border-green-700 bg-green-950/40 p-4 text-green-300">
+            {success}
           </div>
         )}
 
@@ -226,7 +286,9 @@ export default function DesertStormAdminPage() {
                     value={cycle.id}
                   >
                     Week {cycle.weekNumber} — {cycle.name}
-                    {cycle.isCurrent ? " (Current)" : ""}
+                    {cycle.isCurrent
+                      ? " (Current)"
+                      : ""}
                   </option>
                 ))}
               </select>
@@ -368,6 +430,32 @@ export default function DesertStormAdminPage() {
                           : "Not Published"}
                       </p>
                     </div>
+                  </div>
+
+                  <div className="mt-5 border-t border-blue-900 pt-5">
+                    <h4 className="text-lg font-bold">
+                      Stage 1 — Player Sync
+                    </h4>
+
+                    <p className="mt-1 text-sm text-gray-400">
+                      Sync approved players and their First Squad Power
+                      from the linked Alliance Cycle.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleStage1Sync(cycle.id)
+                      }
+                      disabled={
+                        syncingCycleId === cycle.id
+                      }
+                      className="mt-4 w-full rounded-xl bg-blue-600 p-3 font-bold transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-6"
+                    >
+                      {syncingCycleId === cycle.id
+                        ? "Syncing..."
+                        : "🔄 Sync Stage 1 Players"}
+                    </button>
                   </div>
                 </div>
               ))}
