@@ -129,7 +129,7 @@ export default function DesertStormAdminPage() {
       if (!response.ok) {
         throw new Error(
           data.error ||
-            "Failed to create Desert Storm cycle."
+          "Failed to create Desert Storm cycle."
         );
       }
 
@@ -180,13 +180,13 @@ export default function DesertStormAdminPage() {
       if (!response.ok) {
         throw new Error(
           data.error ||
-            "Failed to sync Stage 1 players."
+          "Failed to sync Stage 1 players."
         );
       }
 
       setSuccess(
         data.message ||
-          "Stage 1 players synced successfully."
+        "Stage 1 players synced successfully."
       );
 
       await loadData();
@@ -456,12 +456,13 @@ export default function DesertStormAdminPage() {
                         ? "Syncing..."
                         : "🔄 Sync Stage 1 Players"}
                     </button>
+
                     <Link
-  href={`/admin/desert-storm/stage-1/${cycle.id}`}
-  className="mt-2 block w-full rounded-xl border border-green-800 bg-green-950/20 px-4 py-3 text-center font-semibold text-green-300 transition hover:bg-green-950/40"
->
-  👥 Show Eligible Players
-</Link>
+                      href={`/admin/desert-storm/stage-1/${cycle.id}`}
+                      className="mt-2 block w-full rounded-xl border border-green-800 bg-green-950/20 px-4 py-3 text-center font-semibold text-green-300 transition hover:bg-green-950/40"
+                    >
+                      👥 Show Eligible Players
+                    </Link>
                   </div>
                 </div>
               ))}
